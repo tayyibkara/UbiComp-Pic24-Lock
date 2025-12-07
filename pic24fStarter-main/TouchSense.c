@@ -170,7 +170,7 @@ void ReadCTMU() {
     AD1CHS = tempADch;    // restore A/D channel select
 }
 
-int GetPressedButton() {
+int GetPressedButton(void) {
     // 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
     for(int i = 0; i < NUM_TOUCHPADS; i++) {
         if(buttons[i] == 1) { 

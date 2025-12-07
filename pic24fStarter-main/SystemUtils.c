@@ -15,3 +15,15 @@ void delay_ms(unsigned int milliseconds) {
     }
     T1CONbits.TON = 0; 
 }
+//#include "SystemUtils.h"
+//
+//volatile unsigned long globalTimer = 0;
+//
+//void delay_ms(unsigned int milliseconds) {
+//    // Simple blocking delay calibrated for ~16 MIPS
+//    unsigned long cycles = milliseconds * 3200; 
+//    while(cycles > 0) {
+//        Nop();
+//        cycles--;
+//    }
+//}
