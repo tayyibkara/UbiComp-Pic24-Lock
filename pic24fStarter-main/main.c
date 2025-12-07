@@ -14,11 +14,11 @@
 // NOTE: Removed 'const' so we can change it. Size increased to 8.
 uint8_t secretCode[8] = {3, 0, 1, 2, 0, 0, 0, 0}; 
 int codeLength = 4; // Replaced #define with variable
-
+int failedAttempts = 0; 
 // --- Prototypes ---
 void ShowMenu(void);
 void ChangePassword(void);
-
+void HandleLockout(void);
 int main(void) {
     // 1. Initialization
     INIT_CLOCK(); 
@@ -46,7 +46,7 @@ int main(void) {
     int isStandby = 1; 
     int timerActive = 0; 
     unsigned long timerStart = 0; 
-    
+
     // Inactivity timer variables
     unsigned long lastActivityTime = 0; 
     const unsigned long INACTIVITY_TIMEOUT = 45000; 
@@ -189,6 +189,7 @@ int main(void) {
                 
                 if (isCorrect) {
                     // --- SUCCESS ---
+                    failedAttempts = 0;
                     DrawString(10, 20, "UNLOCKED");
                     SetRGBs(0, 255, 0); // Green
                     delay_ms(1000);
@@ -205,11 +206,21 @@ int main(void) {
                     SetRGBs(255, 0, 0); // Red
                     
                 } else {
-                    // --- WRONG ---
+                    // --- WRONG CODE LOGIC ---
                     DrawString(10, 15, "KEY WRONG");
                     SetRGBs(255, 0, 0); // Red
-                    delay_ms(2000);
                     
+                    // 1. Increment Counter
+                    failedAttempts++;
+                    
+                    // 2. Check Limit (3 attempts)
+                    if (failedAttempts >= 3) {
+                        HandleLockout(); // Trigger the 30s wait
+                    } else {
+                        delay_ms(2000); // Normal short delay
+                    }
+                    
+                    // 3. Reset Screen
                     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
                     DrawString(10, 10, "ENTER KEY");
                 }
@@ -333,4 +344,25 @@ void ChangePassword(void) {
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
     DrawString(10, 25, "SAVED!");
     delay_ms(1500);
+}
+void HandleLockout(void) {
+    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+    DrawString(5, 10, "SYSTEM LOCKED");
+    DrawString(5, 25, "WAIT...");
+    
+    // 30 Second Countdown Loop
+    for (int i = 30; i > 0; i--) {
+        DisplayTimer(i); // Reuses your existing timer display
+        
+        // Alarm Effect: Flash Red/Blue
+        SetRGBs(255, 0, 0); delay_ms(500);
+        SetRGBs(0, 0, 255); delay_ms(500);
+    }
+    
+    // Reset Logic
+    failedAttempts = 0;
+    SetRGBs(255, 0, 0); // Back to solid Red
+    
+    // Restore Screen
+    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
 }
