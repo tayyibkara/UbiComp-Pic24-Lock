@@ -169,3 +169,13 @@ void ReadCTMU() {
     ReadPotentiometer();  // read potentiometer in _potADC
     AD1CHS = tempADch;    // restore A/D channel select
 }
+
+int GetPressedButton() {
+    // 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
+    for(int i = 0; i < NUM_TOUCHPADS; i++) {
+        if(buttons[i] == 1) { 
+            return i;
+        }
+    }
+    return -1;
+}

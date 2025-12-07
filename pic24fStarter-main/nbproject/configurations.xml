@@ -8,6 +8,8 @@
       <itemPath>PIC24FStarter.h</itemPath>
       <itemPath>TouchSense.h</itemPath>
       <itemPath>RGBLeds.h</itemPath>
+      <itemPath>DisplayUtils.h</itemPath>
+      <itemPath>SystemUtils.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -26,6 +28,8 @@
       <itemPath>main.c</itemPath>
       <itemPath>TouchSense.c</itemPath>
       <itemPath>RGBLeds.c</itemPath>
+      <itemPath>DisplayUtils.c</itemPath>
+      <itemPath>SystemUtils.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>

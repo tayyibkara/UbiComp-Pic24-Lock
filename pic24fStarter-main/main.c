@@ -5,7 +5,8 @@
 
 #include "PIC24FStarter.h"
 #include <string.h>
-
+#include "DisplayUtils.h" // New helper for OLED drawing
+#include "SystemUtils.h"  
 // --- Configuration ---
 // Button Mapping: 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
 // Secret Code Sequence: UP, DOWN, LEFT, RIGHT
@@ -13,158 +14,158 @@ const uint8_t SECRET_CODE[4] = {3, 0, 1, 2};
 #define CODE_LENGTH 4
 
 // --- Simple 5x7 Font Data for Text Display ---
-const uint8_t FONT[][5] = {
-    {0x00, 0x00, 0x00, 0x00, 0x00}, // SPACE (0)
-    {0x08, 0x1C, 0x3E, 0x1C, 0x08}, // * (ASTERISK) (1)
-    {0x00, 0x00, 0x06, 0x00, 0x00}, // : (COLON) (2)
-    {0x3E, 0x51, 0x49, 0x45, 0x3E}, // 0 (3)
-    {0x00, 0x41, 0x7F, 0x40, 0x00}, // 1 (4)
-    {0x71, 0x49, 0x49, 0x49, 0x46}, // 2 (5)
-    {0x41, 0x49, 0x49, 0x49, 0x36}, // 3 (6)
-    {0x0F, 0x08, 0x08, 0x08, 0x7F}, // 4 (7)
-    {0x4F, 0x49, 0x49, 0x49, 0x31}, // 5 (8)
-    {0x3E, 0x49, 0x49, 0x49, 0x32}, // 6 (9)
-    {0x01, 0x01, 0x79, 0x05, 0x03}, // 7 (10)
-    {0x36, 0x49, 0x49, 0x49, 0x36}, // 8 (11)
-    {0x26, 0x49, 0x49, 0x49, 0x3E}, // 9 (12)
-    {0x7E, 0x11, 0x11, 0x11, 0x7E}, // A (13)
-    {0x7F, 0x49, 0x49, 0x49, 0x36}, // B (14)
-    {0x3E, 0x41, 0x41, 0x41, 0x22}, // C (15)
-    {0x7F, 0x41, 0x41, 0x22, 0x1C}, // D (16)
-    {0x7F, 0x49, 0x49, 0x49, 0x41}, // E (17)
-    {0x7F, 0x09, 0x09, 0x09, 0x01}, // F (18)
-    {0x3E, 0x41, 0x49, 0x49, 0x7A}, // G (19)
-    {0x7F, 0x08, 0x08, 0x08, 0x7F}, // H (20)
-    {0x00, 0x41, 0x7F, 0x41, 0x00}, // I (21)
-    {0x20, 0x40, 0x41, 0x3F, 0x01}, // J (22)
-    {0x7F, 0x08, 0x14, 0x22, 0x41}, // K (23)
-    {0x7F, 0x40, 0x40, 0x40, 0x40}, // L (24)
-    {0x7F, 0x02, 0x0C, 0x02, 0x7F}, // M (25)
-    {0x7F, 0x04, 0x08, 0x10, 0x7F}, // N (26)
-    {0x3E, 0x41, 0x41, 0x41, 0x3E}, // O (27)
-    {0x7F, 0x09, 0x09, 0x09, 0x06}, // P (28)
-    {0x3E, 0x41, 0x51, 0x21, 0x5E}, // Q (29)
-    {0x7F, 0x09, 0x19, 0x29, 0x46}, // R (30)
-    {0x46, 0x49, 0x49, 0x49, 0x31}, // S (31)
-    {0x01, 0x01, 0x7F, 0x01, 0x01}, // T (32)
-    {0x3F, 0x40, 0x40, 0x40, 0x3F}, // U (33)
-    {0x1F, 0x20, 0x40, 0x20, 0x1F}, // V (34)
-    {0x3F, 0x40, 0x38, 0x40, 0x3F}, // W (35)
-    {0x63, 0x14, 0x08, 0x14, 0x63}, // X (36)
-    {0x07, 0x08, 0x70, 0x08, 0x07}, // Y (37)
-    {0x61, 0x51, 0x49, 0x45, 0x43}, // Z (38)
-};
+//const uint8_t FONT[][5] = {
+//    {0x00, 0x00, 0x00, 0x00, 0x00}, // SPACE (0)
+//    {0x08, 0x1C, 0x3E, 0x1C, 0x08}, // * (ASTERISK) (1)
+//    {0x00, 0x00, 0x06, 0x00, 0x00}, // : (COLON) (2)
+//    {0x3E, 0x51, 0x49, 0x45, 0x3E}, // 0 (3)
+//    {0x00, 0x41, 0x7F, 0x40, 0x00}, // 1 (4)
+//    {0x71, 0x49, 0x49, 0x49, 0x46}, // 2 (5)
+//    {0x41, 0x49, 0x49, 0x49, 0x36}, // 3 (6)
+//    {0x0F, 0x08, 0x08, 0x08, 0x7F}, // 4 (7)
+//    {0x4F, 0x49, 0x49, 0x49, 0x31}, // 5 (8)
+//    {0x3E, 0x49, 0x49, 0x49, 0x32}, // 6 (9)
+//    {0x01, 0x01, 0x79, 0x05, 0x03}, // 7 (10)
+//    {0x36, 0x49, 0x49, 0x49, 0x36}, // 8 (11)
+//    {0x26, 0x49, 0x49, 0x49, 0x3E}, // 9 (12)
+//    {0x7E, 0x11, 0x11, 0x11, 0x7E}, // A (13)
+//    {0x7F, 0x49, 0x49, 0x49, 0x36}, // B (14)
+//    {0x3E, 0x41, 0x41, 0x41, 0x22}, // C (15)
+//    {0x7F, 0x41, 0x41, 0x22, 0x1C}, // D (16)
+//    {0x7F, 0x49, 0x49, 0x49, 0x41}, // E (17)
+//    {0x7F, 0x09, 0x09, 0x09, 0x01}, // F (18)
+//    {0x3E, 0x41, 0x49, 0x49, 0x7A}, // G (19)
+//    {0x7F, 0x08, 0x08, 0x08, 0x7F}, // H (20)
+//    {0x00, 0x41, 0x7F, 0x41, 0x00}, // I (21)
+//    {0x20, 0x40, 0x41, 0x3F, 0x01}, // J (22)
+//    {0x7F, 0x08, 0x14, 0x22, 0x41}, // K (23)
+//    {0x7F, 0x40, 0x40, 0x40, 0x40}, // L (24)
+//    {0x7F, 0x02, 0x0C, 0x02, 0x7F}, // M (25)
+//    {0x7F, 0x04, 0x08, 0x10, 0x7F}, // N (26)
+//    {0x3E, 0x41, 0x41, 0x41, 0x3E}, // O (27)
+//    {0x7F, 0x09, 0x09, 0x09, 0x06}, // P (28)
+//    {0x3E, 0x41, 0x51, 0x21, 0x5E}, // Q (29)
+//    {0x7F, 0x09, 0x19, 0x29, 0x46}, // R (30)
+//    {0x46, 0x49, 0x49, 0x49, 0x31}, // S (31)
+//    {0x01, 0x01, 0x7F, 0x01, 0x01}, // T (32)
+//    {0x3F, 0x40, 0x40, 0x40, 0x3F}, // U (33)
+//    {0x1F, 0x20, 0x40, 0x20, 0x1F}, // V (34)
+//    {0x3F, 0x40, 0x38, 0x40, 0x3F}, // W (35)
+//    {0x63, 0x14, 0x08, 0x14, 0x63}, // X (36)
+//    {0x07, 0x08, 0x70, 0x08, 0x07}, // Y (37)
+//    {0x61, 0x51, 0x49, 0x45, 0x43}, // Z (38)
+//};
 
 // --- Helper Functions ---
 
 // Global timer variable to track elapsed time
-static unsigned long globalTimer = 0;
+//static unsigned long globalTimer = 0;
 
 // Simple delay using Timer1
-void delay_ms(unsigned int milliseconds) {
-    T1CONbits.TCKPS = 0b11; // Prescale 1:256
-    PR1 = 47; TMR1 = 0; 
-    T1CONbits.TON = 1; 
-    unsigned long count = 0; // Changed from int to unsigned long to prevent overflow
-    while (count < milliseconds) {
-        while (!IFS0bits.T1IF); 
-        IFS0bits.T1IF = 0; 
-        count++;
-        globalTimer += 1; // Increment global timer by 1ms for each interrupt
-    }
-    T1CONbits.TON = 0; 
-}
-
-// Helper to draw a single character
-void DrawChar(uint8_t x, uint8_t y, char c) {
-    int index;
-    if (c == '*') {
-        index = 1; // Asterisk at index 1
-    } else if (c == ':') {
-        index = 2; // Colon at index 2
-    } else if (c >= '0' && c <= '9') {
-        index = 3 + (c - '0'); // Digits 0-9 at indices 3-12
-    } else if (c >= 'A' && c <= 'Z') {
-        index = 13 + (c - 'A'); // Letters A-Z at indices 13-38
-    } else {
-        index = 0; // Space for unsupported chars
-    }
-    
-    for (int col = 0; col < 5; col++) {
-        uint8_t columnData = FONT[index][col];
-        for (int row = 0; row < 8; row++) {
-            if ((columnData >> row) & 0x01) {
-                PutPixel(x + col, y + row);
-            }
-        }
-    }
-}
-
-// Helper to draw a string
-void DrawString(uint8_t x, uint8_t y, char* str) {
-    int cursorX = x;
-    while (*str) {
-        DrawChar(cursorX, y, *str);
-        cursorX += 6; // Move cursor (5 width + 1 spacing)
-        str++;
-    }
-}
-
-// Helper to display entered password asterisks with blinking
-void DisplayPasswordProgress(int stepsEntered) {
-    // Clear the password display area first
-    SetColor(BLACK);
-    for (int i = 0; i < 30; i++) {
-        for (int j = 0; j < 8; j++) {
-            PutPixel(10 + i, 30 + j);
-        }
-    }
-    
-    // Draw entered asterisks in WHITE
-    SetColor(WHITE);
-    for (int i = 0; i < stepsEntered; i++) {
-        DrawChar(10 + (i * 6), 30, '*');
-    }
-}
-
-// Helper to display timer on screen
-void DisplayTimer(int secondsRemaining) {
-    // Clear the timer area (right side of screen)
-    SetColor(BLACK);
-    for (int i = 50; i < 128; i++) {
-        for (int j = 0; j < 16; j++) {
-            PutPixel(i, 20 + j);
-        }
-    }
-    
-    // Draw timer in WHITE with "SEC" label on the same line
-    SetColor(WHITE);
-    
-    // Draw the seconds number
-    if (secondsRemaining < 10) {
-        DrawChar(70, 20, '0' + secondsRemaining);
-        DrawString(76, 20, "SEC");
-    } else {
-        DrawChar(70, 20, '0' + (secondsRemaining / 10));
-        DrawChar(76, 20, '0' + (secondsRemaining % 10));
-        DrawString(82, 20, "SEC");
-    }
-}
-
-// Identify which button is currently pressed
-// Returns -1 if none, 0..4 if pressed
-int GetPressedButton() {
-    // Check buttons array from TouchSense.c
-    // 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
-    for(int i = 0; i < NUM_TOUCHPADS; i++) {
-        if(buttons[i] == 1) { 
-            return i;
-        }
-    }
-    return -1;
-}
-
-// --- Main Application ---
+//void delay_ms(unsigned int milliseconds) {
+//    T1CONbits.TCKPS = 0b11; // Prescale 1:256
+//    PR1 = 47; TMR1 = 0; 
+//    T1CONbits.TON = 1; 
+//    unsigned long count = 0; // Changed from int to unsigned long to prevent overflow
+//    while (count < milliseconds) {
+//        while (!IFS0bits.T1IF); 
+//        IFS0bits.T1IF = 0; 
+//        count++;
+//        globalTimer += 1; // Increment global timer by 1ms for each interrupt
+//    }
+//    T1CONbits.TON = 0; 
+//}
+//
+//// Helper to draw a single character
+//void DrawChar(uint8_t x, uint8_t y, char c) {
+//    int index;
+//    if (c == '*') {
+//        index = 1; // Asterisk at index 1
+//    } else if (c == ':') {
+//        index = 2; // Colon at index 2
+//    } else if (c >= '0' && c <= '9') {
+//        index = 3 + (c - '0'); // Digits 0-9 at indices 3-12
+//    } else if (c >= 'A' && c <= 'Z') {
+//        index = 13 + (c - 'A'); // Letters A-Z at indices 13-38
+//    } else {
+//        index = 0; // Space for unsupported chars
+//    }
+//    
+//    for (int col = 0; col < 5; col++) {
+//        uint8_t columnData = FONT[index][col];
+//        for (int row = 0; row < 8; row++) {
+//            if ((columnData >> row) & 0x01) {
+//                PutPixel(x + col, y + row);
+//            }
+//        }
+//    }
+//}
+//
+//// Helper to draw a string
+//void DrawString(uint8_t x, uint8_t y, char* str) {
+//    int cursorX = x;
+//    while (*str) {
+//        DrawChar(cursorX, y, *str);
+//        cursorX += 6; // Move cursor (5 width + 1 spacing)
+//        str++;
+//    }
+//}
+//
+//// Helper to display entered password asterisks with blinking
+//void DisplayPasswordProgress(int stepsEntered) {
+//    // Clear the password display area first
+//    SetColor(BLACK);
+//    for (int i = 0; i < 30; i++) {
+//        for (int j = 0; j < 8; j++) {
+//            PutPixel(10 + i, 30 + j);
+//        }
+//    }
+//    
+//    // Draw entered asterisks in WHITE
+//    SetColor(WHITE);
+//    for (int i = 0; i < stepsEntered; i++) {
+//        DrawChar(10 + (i * 6), 30, '*');
+//    }
+//}
+//
+//// Helper to display timer on screen
+//void DisplayTimer(int secondsRemaining) {
+//    // Clear the timer area (right side of screen)
+//    SetColor(BLACK);
+//    for (int i = 50; i < 128; i++) {
+//        for (int j = 0; j < 16; j++) {
+//            PutPixel(i, 20 + j);
+//        }
+//    }
+//    
+//    // Draw timer in WHITE with "SEC" label on the same line
+//    SetColor(WHITE);
+//    
+//    // Draw the seconds number
+//    if (secondsRemaining < 10) {
+//        DrawChar(70, 20, '0' + secondsRemaining);
+//        DrawString(76, 20, "SEC");
+//    } else {
+//        DrawChar(70, 20, '0' + (secondsRemaining / 10));
+//        DrawChar(76, 20, '0' + (secondsRemaining % 10));
+//        DrawString(82, 20, "SEC");
+//    }
+//}
+//
+//// Identify which button is currently pressed
+//// Returns -1 if none, 0..4 if pressed
+//int GetPressedButton() {
+//    // Check buttons array from TouchSense.c
+//    // 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
+//    for(int i = 0; i < NUM_TOUCHPADS; i++) {
+//        if(buttons[i] == 1) { 
+//            return i;
+//        }
+//    }
+//    return -1;
+//}
+//
+//// --- Main Application ---
 
 int main(void) {
     // 1. Initialization

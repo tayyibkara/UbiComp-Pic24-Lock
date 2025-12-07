@@ -17,5 +17,5 @@ extern uint16_t _potADC;
 void ReadPotentiometer();
 void CTMUInit();
 void ReadCTMU();
-
+int GetPressedButton(void);
 #endif	/* TOUCHSENSE__H */
