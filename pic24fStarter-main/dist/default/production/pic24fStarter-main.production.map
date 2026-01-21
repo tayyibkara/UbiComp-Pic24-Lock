@@ -324,15 +324,15 @@ __CONFIG1
  .debug_abbrev    0x00062d        0x107 build/default/production/SystemUtils.o
  .debug_abbrev    0x000734         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
 
-.debug_line       0x000000        0x8cd
+.debug_line       0x000000        0x8cc
  *(.debug_line)
  .debug_line      0x000000        0x241 build/default/production/SH1101A.o
  .debug_line      0x000241        0x1ef build/default/production/main.o
- .debug_line      0x000430        0x175 build/default/production/TouchSense.o
- .debug_line      0x0005a5        0x10e build/default/production/RGBLeds.o
- .debug_line      0x0006b3         0xce build/default/production/DisplayUtils.o
- .debug_line      0x000781        0x107 build/default/production/SystemUtils.o
- .debug_line      0x000888         0x45 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_line      0x000430        0x174 build/default/production/TouchSense.o
+ .debug_line      0x0005a4        0x10e build/default/production/RGBLeds.o
+ .debug_line      0x0006b2         0xce build/default/production/DisplayUtils.o
+ .debug_line      0x000780        0x107 build/default/production/SystemUtils.o
+ .debug_line      0x000887         0x45 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
 
 .debug_frame      0x000000        0x372
  *(.debug_frame)

@@ -13,7 +13,7 @@
 // Button Mapping: 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
 // NOTE: Removed 'const' so we can change it. Size increased to 8.
 uint8_t secretCode[8] = {3, 0, 1, 2, 0, 0, 0, 0}; 
-int codeLength = 4; // Replaced #define with variable
+int codeLength = 4; // Replaced #define w  ith variable
 int failedAttempts = 0; 
 // --- Prototypes ---
 void ShowMenu(void);
