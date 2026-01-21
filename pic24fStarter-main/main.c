@@ -20,6 +20,7 @@ int lastDisplayedTime = -1;
 void ShowMenu(void);
 void ChangePassword(void);
 void HandleLockout(void);
+void EnterSleepMode(void);
 int main(void) {
     // 1. Initialization
     INIT_CLOCK(); 
@@ -28,45 +29,38 @@ int main(void) {
     RGBTurnOnLED();
     ResetDevice();
     
-    // ============================================
-    // LOAD CODE FROM FLASH (Persistent Storage)
-    // ============================================
+    // Load Code from Flash
     LoadCodeFromFlash(secretCode, &codeLength);
     
-    // ============================================
-    // SENSOR WARM-UP & CALIBRATION
-    // ============================================
+    // Calibration
     SetColor(BLACK); ClearDevice();
     SetColor(WHITE); DrawString(10, 20, "CALIBRATING");
-    
     for(int i = 0; i < 250; i++) { ReadCTMU(); }
-    
     SetColor(BLACK); ClearDevice(); 
-    // ============================================
 
     // App State Variables
     int currentStep = 0;
     int lastButtonState = -1;
     int isLocked = 1;
-    uint8_t enteredCode[8] = {0}; // Increased to 8
+    uint8_t enteredCode[8] = {0}; 
     int isStandby = 1; 
     int timerActive = 0; 
     unsigned long timerStart = 0; 
-
-    // Inactivity timer variables
-    unsigned long lastActivityTime = 0; 
-    const unsigned long INACTIVITY_TIMEOUT = 45000; 
     
-    // Blinking asterisks variables
+    // Inactivity Variables
+    unsigned long lastActivityTime = globalTimer; 
+    int lastDisplayedTime = -1;
+
+    // Blinking variables
     int blinkingSteps = 0; 
     unsigned long blinkStart = 0; 
     int isBlinking = 0; 
 
-    // Initial Screen Setup - Standby Screen
+    // Initial Screen
     SetColor(WHITE); 
     DrawString(10, 20, "STANDBY");
     DrawString(10, 35, "PRESS CENTER");
-    SetRGBs(255, 0, 0); // Red LED = Locked
+    SetRGBs(255, 0, 0); 
 
     while(1) { 
         // 2. Read Sensors
@@ -74,77 +68,93 @@ int main(void) {
         int currentButton = GetPressedButton();
         
         // ============================================
-        // STANDBY MODE
+        // 1. GLOBAL INACTIVITY CHECK (Moved to TOP)
         // ============================================
-        if (isStandby) {
-            if (currentButton == 4 && lastButtonState == -1) { // CENTER button
-                isStandby = 0;
+        // We check this FIRST so it works even in Standby
+        if (globalTimer - lastActivityTime >= 30000) {
+            
+            // CASE A: Already in Standby -> Go to SLEEP
+            if (isStandby) {
+                EnterSleepMode(); 
+                
+                // --- WAKE UP LOGIC ---
+                // Code resumes here after waking up
+                isStandby = 0;      // Go straight to "Enter Key"
+                currentStep = 0;
+                lastActivityTime = globalTimer;
+                lastButtonState = 4; // Debounce Center button
+                delay_ms(50);
+                continue;
+            }
+            
+            // CASE B: Active -> Go to STANDBY
+            else {
+                isStandby = 1;
                 currentStep = 0;
                 isBlinking = 0;
-                blinkingSteps = 0;
+                timerActive = 0;
+                lastActivityTime = globalTimer; // RESET TIMER for Stage 2
+                
+                SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+                DrawString(10, 20, "STANDBY");
+                DrawString(10, 35, "PRESS CENTER");
+                SetRGBs(255, 0, 0); 
+                
+                lastButtonState = currentButton;
+                delay_ms(50);
+                continue;
+            }
+        }
+        
+        // ============================================
+        // 2. STANDBY MODE LOGIC
+        // ============================================
+        if (isStandby) {
+            if (currentButton == 4 && lastButtonState == -1) { // Wake on CENTER
+                isStandby = 0;
+                currentStep = 0;
                 lastActivityTime = globalTimer; 
                 
                 SetColor(BLACK); ClearDevice(); SetColor(WHITE);
                 DrawString(10, 10, "ENTER KEY");
-                SetRGBs(255, 0, 0); // Red LED
+                SetRGBs(255, 0, 0); 
             }
             lastButtonState = currentButton;
             delay_ms(50);
-            continue; 
+            continue; // This 'continue' is now safe because we checked timer above
         }
         
         // ============================================
-        // INACTIVITY CHECK
+        // 3. KEY ENTRY MODE (Active)
         // ============================================
-        unsigned long inactivityElapsed = globalTimer - lastActivityTime;
-        if (inactivityElapsed >= INACTIVITY_TIMEOUT) {
-            // Timeout -> Return to standby
-            currentStep = 0;
-            isBlinking = 0;
-            timerActive = 0;
-            isStandby = 1;
+        if (timerActive) {
+            unsigned long elapsedTime = globalTimer - timerStart;
+            int secondsRemaining = 15 - (elapsedTime / 1000);
             
-            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-            DrawString(10, 20, "STANDBY");
-            DrawString(10, 35, "PRESS CENTER");
-            SetRGBs(255, 0, 0); 
+            if (secondsRemaining <= 0) {
+                // Input Timeout
+                timerActive = 0;
+                currentStep = 0;
+                isBlinking = 0;
+                lastDisplayedTime = -1;
+                
+                SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+                DrawString(10, 15, "TIME OUT");
+                delay_ms(2000); 
+                
+                SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+                DrawString(10, 10, "ENTER KEY");
+                lastActivityTime = globalTimer; // Reset inactivity timer
+                lastButtonState = currentButton;
+                delay_ms(50);
+                continue; 
+            }
             
-            lastButtonState = currentButton;
-            delay_ms(50);
-            continue; 
+            if (secondsRemaining != lastDisplayedTime) {
+                DisplayTimer(secondsRemaining);
+                lastDisplayedTime = secondsRemaining;
+            }
         }
-        
-        // ============================================
-        // KEY ENTRY MODE
-        // ============================================
-if (timerActive) {
-    unsigned long elapsedTime = globalTimer - timerStart;
-    int secondsRemaining = 15 - (elapsedTime / 1000);
-    
-    // Timeout Check
-    if (secondsRemaining <= 0) {
-        timerActive = 0;
-        currentStep = 0;
-        isBlinking = 0;
-        lastDisplayedTime = -1; // Reset tracker
-        
-        SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-        DrawString(10, 15, "TIME OUT");
-        delay_ms(2000); 
-        
-        SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-        DrawString(10, 10, "ENTER KEY");
-        lastButtonState = currentButton;
-        delay_ms(50);
-        continue; 
-    }
-    
-    // THE FIX: Only draw if the number changed!
-    if (secondsRemaining != lastDisplayedTime) {
-        DisplayTimer(secondsRemaining);
-        lastDisplayedTime = secondsRemaining;
-    }
-}
         
         // Blink Logic
         if (isBlinking && blinkingSteps > 0) {
@@ -162,16 +172,17 @@ if (timerActive) {
         }
 
         // ============================================
-        // BUTTON PRESS LOGIC
+        // 4. BUTTON PRESS LOGIC
         // ============================================
         if (currentButton != -1 && lastButtonState == -1) {
+            
+            // Any button press resets the inactivity timer
+            lastActivityTime = globalTimer; 
             
             if (currentStep == 0 && !timerActive) {
                 timerActive = 1;
                 timerStart = globalTimer;
-                lastActivityTime = globalTimer; 
             }
-            lastActivityTime = globalTimer;
             
             SetRGBs(0, 0, 255); // Blue flash
             
@@ -199,41 +210,35 @@ if (timerActive) {
                 SetColor(BLACK); ClearDevice(); SetColor(WHITE);
                 
                 if (isCorrect) {
-                    // --- SUCCESS ---
                     failedAttempts = 0;
                     DrawString(10, 20, "UNLOCKED");
-                    SetRGBs(0, 255, 0); // Green
+                    SetRGBs(0, 255, 0); 
                     delay_ms(1000);
                     
-                    // !!! ENTER MENU SCREEN !!!
-                    ShowMenu();
+                    ShowMenu(); // Enter Menu
                     
-                    // Reset to Locked after Menu exit
-                    isLocked = 1;
-                    isStandby = 1;
+                    // Reset after Menu exit
+                    isStandby = 1; 
+                    lastActivityTime = globalTimer; // Reset timer for standby
                     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
                     DrawString(10, 20, "STANDBY");
                     DrawString(10, 35, "PRESS CENTER");
-                    SetRGBs(255, 0, 0); // Red
+                    SetRGBs(255, 0, 0); 
                     
                 } else {
-                    // --- WRONG CODE LOGIC ---
                     DrawString(10, 15, "KEY WRONG");
-                    SetRGBs(255, 0, 0); // Red
+                    SetRGBs(255, 0, 0); 
                     
-                    // 1. Increment Counter
                     failedAttempts++;
-                    
-                    // 2. Check Limit (3 attempts)
                     if (failedAttempts >= 3) {
-                        HandleLockout(); // Trigger the 30s wait
+                        HandleLockout(); 
                     } else {
-                        delay_ms(2000); // Normal short delay
+                        delay_ms(2000); 
                     }
                     
-                    // 3. Reset Screen
                     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
                     DrawString(10, 10, "ENTER KEY");
+                    lastActivityTime = globalTimer;
                 }
                 currentStep = 0;
                 isBlinking = 0;
@@ -241,7 +246,7 @@ if (timerActive) {
         }
 
         if (currentButton == -1 && lastButtonState != -1) {
-            if (isLocked) SetRGBs(255, 0, 0); // Red
+            if (isLocked) SetRGBs(255, 0, 0); 
         }
 
         lastButtonState = currentButton;
@@ -249,47 +254,54 @@ if (timerActive) {
     }
     return 0;
 }
-
 // ============================================
 // MENU LOGIC
 // ============================================
+
+
 void ShowMenu(void) {
     int selection = 0; 
     int inMenu = 1;
     int lastBtn = -1;
-    int needsRedraw = 1; // Start true to draw the first frame
+    int needsRedraw = 1; 
+    
+    // Local Timer for Menu Timeout
+    unsigned long menuTimer = globalTimer;
 
-    // Wait for button release
     while(GetPressedButton() != -1) ReadCTMU();
 
     while(inMenu) {
         ReadCTMU();
         int btn = GetPressedButton();
         
-        // THE FIX: Only draw when 'needsRedraw' is true
+        // --- TIMEOUT CHECK ---
+        if (globalTimer - menuTimer > 30000) {
+            return; // Exit to Main -> Main puts us in Standby
+        }
+        
         if (needsRedraw) {
             SetColor(BLACK); ClearDevice(); SetColor(WHITE);
             DrawString(10, 5, "MAIN MENU");
-            
             if (selection == 0) DrawString(10, 25, "> LOCK SYSTEM");
             else DrawString(10, 25, "  LOCK SYSTEM");
-            
             if (selection == 1) DrawString(10, 40, "> CHANGE KEY");
             else DrawString(10, 40, "  CHANGE KEY");
-            
-            needsRedraw = 0; // Stop drawing until next input
+            needsRedraw = 0; 
         }
         
         if (btn != -1 && btn != lastBtn) {
-            if (btn == 0 || btn == 2) { // Scroll
+            menuTimer = globalTimer; // Reset Timer on Input
+            
+            if (btn == 0 || btn == 2) { 
                 selection = !selection; 
-                needsRedraw = 1; // Input happened -> Redraw next loop
+                needsRedraw = 1; 
             } 
-            else if (btn == 4 || btn == 1) { // Select
+            else if (btn == 4 || btn == 1) { 
                 if (selection == 0) inMenu = 0; 
                 else {
                     ChangePassword(); 
-                    needsRedraw = 1; // Redraw when returning from sub-menu
+                    needsRedraw = 1; 
+                    menuTimer = globalTimer; // Reset when returning
                 }
             }
             delay_ms(150);
@@ -303,7 +315,9 @@ void ChangePassword(void) {
     int newLen = 4;
     int choosing = 1;
     int lastBtn = -1;
-    int needsRedraw = 1; // Fix flag
+    int needsRedraw = 1; 
+    
+    unsigned long subMenuTimer = globalTimer; // Local Timer
     
     while(GetPressedButton() != -1) ReadCTMU();
     
@@ -312,24 +326,24 @@ void ChangePassword(void) {
         ReadCTMU();
         int btn = GetPressedButton();
         
-        // THE FIX: Only draw on change
+        // Timeout Check
+        if (globalTimer - subMenuTimer > 30000) return;
+        
         if (needsRedraw) {
             SetColor(BLACK); ClearDevice(); SetColor(WHITE);
             DrawString(10, 5, "LENGTH?");
-            
             if (newLen == 4) DrawString(10, 25, "> 4 DIGITS");
             else DrawString(10, 25, "  4 DIGITS");
-            
             if (newLen == 8) DrawString(10, 40, "> 8 DIGITS");
             else DrawString(10, 40, "  8 DIGITS");
-            
             needsRedraw = 0;
         }
         
         if (btn != -1 && btn != lastBtn) {
+            subMenuTimer = globalTimer; // Reset Timer
             if (btn == 0 || btn == 2) { 
                 newLen = (newLen == 4) ? 8 : 4;
-                needsRedraw = 1; // Trigger redraw
+                needsRedraw = 1; 
             }
             else if (btn == 4 || btn == 1) choosing = 0;
             delay_ms(150);
@@ -341,8 +355,8 @@ void ChangePassword(void) {
     // --- STEP 2: ENTER NEW CODE ---
     int count = 0;
     uint8_t temp[8];
+    subMenuTimer = globalTimer; // Reset Timer for Step 2
     
-    // Draw background ONCE
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
     DrawString(10, 10, "ENTER NEW:");
     
@@ -353,35 +367,35 @@ void ChangePassword(void) {
         ReadCTMU();
         int btn = GetPressedButton();
         
+        // Timeout Check
+        if (globalTimer - subMenuTimer > 30000) return;
+        
         if (btn != -1 && btn != lastBtn) {
+            subMenuTimer = globalTimer; // Reset Timer
             if (btn == 4) continue; 
             
             temp[count] = btn;
             count++;
             
-            // THE FIX: Just draw the new star, don't clear the screen
             SetColor(WHITE);
             for(int i=0; i<count; i++) DrawChar(10 + (i*6), 30, '*');
-            
             SetRGBs(0, 0, 255); delay_ms(100); SetRGBs(0, 255, 0);
         }
         lastBtn = btn;
     }
     
-    // Save Logic
+    // Save Logic (No changes here)
     codeLength = newLen;
     for(int i=0; i<8; i++) {
         if(i < newLen) secretCode[i] = temp[i];
         else secretCode[i] = 0;
     }
-    
-    // Save to Flash (Persistent Storage)
     SaveCodeToFlash(secretCode, codeLength);
-    
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
     DrawString(10, 25, "SAVED!");
     delay_ms(1500);
 }
+
 void HandleLockout(void) {
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
     DrawString(5, 10, "SYSTEM LOCKED");
@@ -402,4 +416,54 @@ void HandleLockout(void) {
     
     // Restore Screen
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+}
+// Interrupt Service Routine for Timer 1
+// This is required to wake the CPU from "Idle" mode
+void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void) {
+    IFS0bits.T1IF = 0; // Clear the interrupt flag
+}
+
+void EnterSleepMode(void) {
+    // 1. Turn OFF High Power Components
+    SetColor(BLACK); ClearDevice(); // OLED Off
+    SetRGBs(0,0,0);                 // LEDs Off
+    
+    // 2. Configure Timer 1 as our "Wake-up Alarm"
+    // We want it to interrupt every ~250ms
+    T1CON = 0;              // Stop Timer
+    TMR1 = 0;               // Clear Count
+    T1CONbits.TCKPS = 0b11; // 1:256 Prescale
+    PR1 = 0x4000;           // ~260ms Wakeup Interval
+    
+    IFS0bits.T1IF = 0;      // Clear Flag
+    IEC0bits.T1IE = 1;      // Enable Interrupts (Crucial for Idle wake-up)
+    T1CONbits.TON = 1;      // Start Timer
+    
+    // 3. Enter Low Power Loop
+    while(1) {
+        // [REAL POWER SAVE] 
+        // This instruction stops the CPU clock!
+        // The code HALTS here until Timer 1 fires an interrupt (every 250ms).
+        __builtin_pwrsav(1); // 1 = Idle Mode
+        
+        // --- CPU WAKES UP HERE ---
+        // (ISR has run and cleared the flag)
+        
+        // Check for User Input
+        ReadCTMU(); 
+        
+        // If Center Button (4) is pressed, fully wake up
+        if (GetPressedButton() == 4) {
+            break; 
+        }
+    }
+    
+    // 4. Cleanup & Restore
+    T1CONbits.TON = 0;      // Stop Timer
+    IEC0bits.T1IE = 0;      // Disable Interrupts (So delay_ms works again)
+    
+    // Restore Screen
+    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+    DrawString(10, 10, "ENTER KEY");
+    SetRGBs(255, 0, 0);     // Red LED
 }
