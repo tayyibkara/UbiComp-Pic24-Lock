@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/production/pic24fStarter-main.production.elf">
+  <executable name="dist/default/debug/pic24fStarter-main.debug.elf">
     <memory name="data">
       <units>bytes</units>
       <length>16384</length>
-      <used>76</used>
-      <free>16308</free>
+      <used>154</used>
+      <free>16230</free>
     </memory>
     <memory name="program">
       <units>bytes</units>
       <length>261876</length>
-      <used>8910</used>
-      <free>252966</free>
+      <used>8691</used>
+      <free>253185</free>
     </memory>
   </executable>
 </project>
