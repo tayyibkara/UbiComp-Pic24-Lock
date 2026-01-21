@@ -29,6 +29,11 @@ int main(void) {
     ResetDevice();
     
     // ============================================
+    // LOAD CODE FROM FLASH (Persistent Storage)
+    // ============================================
+    LoadCodeFromFlash(secretCode, &codeLength);
+    
+    // ============================================
     // SENSOR WARM-UP & CALIBRATION
     // ============================================
     SetColor(BLACK); ClearDevice();
@@ -369,6 +374,9 @@ void ChangePassword(void) {
         if(i < newLen) secretCode[i] = temp[i];
         else secretCode[i] = 0;
     }
+    
+    // Save to Flash (Persistent Storage)
+    SaveCodeToFlash(secretCode, codeLength);
     
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
     DrawString(10, 25, "SAVED!");
