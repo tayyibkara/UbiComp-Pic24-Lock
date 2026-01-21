@@ -13,8 +13,9 @@
 // Button Mapping: 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
 // NOTE: Removed 'const' so we can change it. Size increased to 8.
 uint8_t secretCode[8] = {3, 0, 1, 2, 0, 0, 0, 0}; 
-int codeLength = 4; // Replaced #define with variable
+int codeLength = 4; // Replaced #define w  ith variable
 int failedAttempts = 0; 
+int lastDisplayedTime = -1;
 // --- Prototypes ---
 void ShowMenu(void);
 void ChangePassword(void);
@@ -111,29 +112,34 @@ int main(void) {
         // ============================================
         // KEY ENTRY MODE
         // ============================================
-        if (timerActive) {
-            unsigned long elapsedTime = globalTimer - timerStart;
-            int secondsRemaining = 15 - (elapsedTime / 1000);
-            
-            if (secondsRemaining <= 0) {
-                // Timeout logic
-                timerActive = 0;
-                currentStep = 0;
-                isBlinking = 0;
-                
-                SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-                DrawString(10, 15, "TIME OUT");
-                delay_ms(2000); 
-                
-                SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-                DrawString(10, 10, "ENTER KEY");
-                lastButtonState = currentButton;
-                delay_ms(50);
-                continue; 
-            }
-            DisplayTimer(secondsRemaining);
-            if (currentStep > 0) DisplayPasswordProgress(currentStep);
-        }
+if (timerActive) {
+    unsigned long elapsedTime = globalTimer - timerStart;
+    int secondsRemaining = 15 - (elapsedTime / 1000);
+    
+    // Timeout Check
+    if (secondsRemaining <= 0) {
+        timerActive = 0;
+        currentStep = 0;
+        isBlinking = 0;
+        lastDisplayedTime = -1; // Reset tracker
+        
+        SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+        DrawString(10, 15, "TIME OUT");
+        delay_ms(2000); 
+        
+        SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+        DrawString(10, 10, "ENTER KEY");
+        lastButtonState = currentButton;
+        delay_ms(50);
+        continue; 
+    }
+    
+    // THE FIX: Only draw if the number changed!
+    if (secondsRemaining != lastDisplayedTime) {
+        DisplayTimer(secondsRemaining);
+        lastDisplayedTime = secondsRemaining;
+    }
+}
         
         // Blink Logic
         if (isBlinking && blinkingSteps > 0) {
@@ -243,34 +249,43 @@ int main(void) {
 // MENU LOGIC
 // ============================================
 void ShowMenu(void) {
-    int selection = 0; // 0 = LOCK, 1 = CHANGE KEY
+    int selection = 0; 
     int inMenu = 1;
     int lastBtn = -1;
-    
-    // Wait for release
+    int needsRedraw = 1; // Start true to draw the first frame
+
+    // Wait for button release
     while(GetPressedButton() != -1) ReadCTMU();
 
     while(inMenu) {
         ReadCTMU();
         int btn = GetPressedButton();
         
-        SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-        DrawString(10, 5, "MAIN MENU");
-        
-        if (selection == 0) DrawString(10, 25, "> LOCK SYSTEM");
-        else DrawString(10, 25, "  LOCK SYSTEM");
-        
-        if (selection == 1) DrawString(10, 40, "> CHANGE KEY");
-        else DrawString(10, 40, "  CHANGE KEY");
+        // THE FIX: Only draw when 'needsRedraw' is true
+        if (needsRedraw) {
+            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+            DrawString(10, 5, "MAIN MENU");
+            
+            if (selection == 0) DrawString(10, 25, "> LOCK SYSTEM");
+            else DrawString(10, 25, "  LOCK SYSTEM");
+            
+            if (selection == 1) DrawString(10, 40, "> CHANGE KEY");
+            else DrawString(10, 40, "  CHANGE KEY");
+            
+            needsRedraw = 0; // Stop drawing until next input
+        }
         
         if (btn != -1 && btn != lastBtn) {
-            // Scroll (UP or DOWN)
-            if (btn == 0 || btn == 2) selection = !selection; 
-            
-            // Select (CENTER or RIGHT)
-            else if (btn == 4 || btn == 1) {
-                if (selection == 0) inMenu = 0; // Exit to lock
-                else ChangePassword();          // Go to change key
+            if (btn == 0 || btn == 2) { // Scroll
+                selection = !selection; 
+                needsRedraw = 1; // Input happened -> Redraw next loop
+            } 
+            else if (btn == 4 || btn == 1) { // Select
+                if (selection == 0) inMenu = 0; 
+                else {
+                    ChangePassword(); 
+                    needsRedraw = 1; // Redraw when returning from sub-menu
+                }
             }
             delay_ms(150);
         }
@@ -283,25 +298,34 @@ void ChangePassword(void) {
     int newLen = 4;
     int choosing = 1;
     int lastBtn = -1;
+    int needsRedraw = 1; // Fix flag
     
     while(GetPressedButton() != -1) ReadCTMU();
     
-    // 1. Choose Length
+    // --- STEP 1: CHOOSE LENGTH ---
     while(choosing) {
         ReadCTMU();
         int btn = GetPressedButton();
         
-        SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-        DrawString(10, 5, "LENGTH?");
-        
-        if (newLen == 4) DrawString(10, 25, "> 4 DIGITS");
-        else DrawString(10, 25, "  4 DIGITS");
-        
-        if (newLen == 8) DrawString(10, 40, "> 8 DIGITS");
-        else DrawString(10, 40, "  8 DIGITS");
+        // THE FIX: Only draw on change
+        if (needsRedraw) {
+            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+            DrawString(10, 5, "LENGTH?");
+            
+            if (newLen == 4) DrawString(10, 25, "> 4 DIGITS");
+            else DrawString(10, 25, "  4 DIGITS");
+            
+            if (newLen == 8) DrawString(10, 40, "> 8 DIGITS");
+            else DrawString(10, 40, "  8 DIGITS");
+            
+            needsRedraw = 0;
+        }
         
         if (btn != -1 && btn != lastBtn) {
-            if (btn == 0 || btn == 2) newLen = (newLen == 4) ? 8 : 4;
+            if (btn == 0 || btn == 2) { 
+                newLen = (newLen == 4) ? 8 : 4;
+                needsRedraw = 1; // Trigger redraw
+            }
             else if (btn == 4 || btn == 1) choosing = 0;
             delay_ms(150);
         }
@@ -309,23 +333,28 @@ void ChangePassword(void) {
         delay_ms(50);
     }
     
-    // 2. Enter New Code
+    // --- STEP 2: ENTER NEW CODE ---
     int count = 0;
     uint8_t temp[8];
     
+    // Draw background ONCE
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
     DrawString(10, 10, "ENTER NEW:");
+    
+    while(GetPressedButton() != -1) ReadCTMU();
+    lastBtn = -1;
     
     while(count < newLen) {
         ReadCTMU();
         int btn = GetPressedButton();
         
         if (btn != -1 && btn != lastBtn) {
-            if (btn == 4) continue; // Skip center
+            if (btn == 4) continue; 
             
             temp[count] = btn;
             count++;
             
+            // THE FIX: Just draw the new star, don't clear the screen
             SetColor(WHITE);
             for(int i=0; i<count; i++) DrawChar(10 + (i*6), 30, '*');
             
@@ -334,7 +363,7 @@ void ChangePassword(void) {
         lastBtn = btn;
     }
     
-    // 3. Save
+    // Save Logic
     codeLength = newLen;
     for(int i=0; i<8; i++) {
         if(i < newLen) secretCode[i] = temp[i];
