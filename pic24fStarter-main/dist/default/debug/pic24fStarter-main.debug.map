@@ -4,7 +4,7 @@ Tool Name:
   c:\program files\microchip\xc16\v2.10\bin\bin\..\bin/elf-ld.exe
 
 Command:
-  -TC:\\Users\\mo_n1\\AppData\\Local\\Temp\\tmp000070fc.00 \
+  -TC:\\Users\\mo_n1\\AppData\\Local\\Temp\\tmp0000a664.00 \
   -p24FJ256GB106 \
   --mdfp=D:/MPLAX/packs/Microchip/PIC24F-GA-GB_DFP/1.10.375/xc16 \
   -o \
@@ -76,10 +76,10 @@ section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200                0xee           0x165  (357)
 .const                       0x2ee               0x1bc           0x29a  (666)
-.text                        0x4aa              0x1456          0x1e81  (7809)
-.dinit                      0x1900                0x34            0x4e  (78)
+.text                        0x4aa              0x1492          0x1edb  (7899)
+.dinit                      0x193c                0x36            0x51  (81)
 
-                 Total "program" memory used (bytes):         0x22ce  (8910) 3%
+                 Total "program" memory used (bytes):         0x232b  (9003) 3%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x4000]
@@ -87,13 +87,13 @@ section                    address   length (PC units)   length (bytes) (dec)
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
 reserve_data_0x800           0x800                0x50            0x50  (80)
-.nbss                        0x850                   0            0x12  (18)
-.ndata                       0x862                   0             0x2  (2)
-.nbss                        0x864                   0             0x2  (2)
-.bss                         0x866                   0            0x2e  (46)
-.data                        0x894                   0             0x8  (8)
+.nbss                        0x850                   0             0xc  (12)
+.ndata                       0x85c                   0             0x4  (4)
+.nbss                        0x860                   0             0x8  (8)
+.bss                         0x868                   0            0x2e  (46)
+.data                        0x896                   0             0x8  (8)
 
-                 Total "data" memory used (bytes):           0x9c  (156) <1%
+                 Total "data" memory used (bytes):           0x9e  (158) <1%
 
 
 Dynamic Memory Usage
@@ -101,9 +101,9 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                        0x89c                              0x3f64  (16228)
+stack                        0x89e                              0x3f62  (16226)
 
-                 Maximum dynamic memory (bytes):         0x3f64  (16228)
+                 Maximum dynamic memory (bytes):         0x3f62  (16226)
 
 Info: Project is using a large data memory model when small data memory model is sufficient.
 
@@ -117,35 +117,37 @@ External Symbols in Data Memory (by address):
                     0x0856                  _bigVal
                     0x0858                  _smallAvg
                     0x085a                  _AvgIndex
-                    0x085c                  _globalTimer
-                    0x0860                  __color
-                    0x0862                  _codeLength
-                    0x0864                  _failedAttempts
-                    0x0866                  _buttons
-                    0x086c                  _rawCTMU
-                    0x0876                  _average
-                    0x0880                  _trip
-                    0x088a                  _hyst
-                    0x0894                  _secretCode
+                    0x085c                  _codeLength
+                    0x085e                  _lastDisplayedTime
+                    0x0860                  _globalTimer
+                    0x0864                  __color
+                    0x0866                  _failedAttempts
+                    0x0868                  _buttons
+                    0x086e                  _rawCTMU
+                    0x0878                  _average
+                    0x0882                  _trip
+                    0x088c                  _hyst
+                    0x0896                  _secretCode
 
 External Symbols in Data Memory (by name):
 
                     0x085a                  _AvgIndex
-                    0x0860                  __color
+                    0x0864                  __color
                     0x0850                  __potADC
-                    0x0876                  _average
+                    0x0878                  _average
                     0x0856                  _bigVal
                     0x0853                  _buttonInd
-                    0x0866                  _buttons
-                    0x0862                  _codeLength
-                    0x0864                  _failedAttempts
+                    0x0868                  _buttons
+                    0x085c                  _codeLength
+                    0x0866                  _failedAttempts
                     0x0852                  _first
-                    0x085c                  _globalTimer
-                    0x088a                  _hyst
-                    0x086c                  _rawCTMU
-                    0x0894                  _secretCode
+                    0x0860                  _globalTimer
+                    0x088c                  _hyst
+                    0x085e                  _lastDisplayedTime
+                    0x086e                  _rawCTMU
+                    0x0896                  _secretCode
                     0x0858                  _smallAvg
-                    0x0880                  _trip
+                    0x0882                  _trip
                     0x0854                  _value
 
 External Symbols in Program Memory (by address):
@@ -169,53 +171,53 @@ External Symbols in Program Memory (by address):
                   0x000ad8                  _GetPixel
                   0x000bf0                  _ClearDevice
                   0x000c72                  _main
-                  0x001004                  _ShowMenu
-                  0x0010be                  _ChangePassword
-                  0x001248                  _HandleLockout
-                  0x0012a2                  _ReadPotentiometer
-                  0x0012c8                  _CTMUInit
-                  0x001336                  _ReadCTMU
-                  0x001568                  _GetPressedButton
-                  0x00158c                  _DrawChar
-                  0x00164e                  _DrawString
-                  0x001682                  _DisplayPasswordProgress
-                  0x0016e2                  _DisplayTimer
-                  0x001770                  _ShowCalibrationScreen
-                  0x001786                  _SetRGBs
-                  0x0017d8                  _RGBMapColorPins
-                  0x001848                  _RGBTurnOffLED
-                  0x001866                  _RGBTurnOnLED
-                  0x0018b6                  _delay_ms
+                  0x00100a                  _ShowMenu
+                  0x0010da                  _ChangePassword
+                  0x001284                  _HandleLockout
+                  0x0012de                  _ReadPotentiometer
+                  0x001304                  _CTMUInit
+                  0x001372                  _ReadCTMU
+                  0x0015a4                  _GetPressedButton
+                  0x0015c8                  _DrawChar
+                  0x00168a                  _DrawString
+                  0x0016be                  _DisplayPasswordProgress
+                  0x00171e                  _DisplayTimer
+                  0x0017ac                  _ShowCalibrationScreen
+                  0x0017c2                  _SetRGBs
+                  0x001814                  _RGBMapColorPins
+                  0x001884                  _RGBTurnOffLED
+                  0x0018a2                  _RGBTurnOnLED
+                  0x0018f2                  _delay_ms
 
 External Symbols in Program Memory (by name):
 
-                  0x0012c8                  _CTMUInit
-                  0x0010be                  _ChangePassword
+                  0x001304                  _CTMUInit
+                  0x0010da                  _ChangePassword
                   0x000bf0                  _ClearDevice
                   0x0004aa                  _Delay10us
                   0x0004f2                  _DelayMs
                   0x000546                  _DeviceRead
                   0x00057a                  _DeviceReadWord
                   0x000530                  _DeviceWrite
-                  0x001682                  _DisplayPasswordProgress
-                  0x0016e2                  _DisplayTimer
-                  0x00158c                  _DrawChar
-                  0x00164e                  _DrawString
+                  0x0016be                  _DisplayPasswordProgress
+                  0x00171e                  _DisplayTimer
+                  0x0015c8                  _DrawChar
+                  0x00168a                  _DrawString
                   0x0005aa                  _DriverInterfaceInit
                   0x0003d2                  _FONT
                   0x000ad8                  _GetPixel
-                  0x001568                  _GetPressedButton
-                  0x001248                  _HandleLockout
+                  0x0015a4                  _GetPressedButton
+                  0x001284                  _HandleLockout
                   0x00094e                  _PutPixel
-                  0x0017d8                  _RGBMapColorPins
-                  0x001848                  _RGBTurnOffLED
-                  0x001866                  _RGBTurnOnLED
-                  0x001336                  _ReadCTMU
-                  0x0012a2                  _ReadPotentiometer
+                  0x001814                  _RGBMapColorPins
+                  0x001884                  _RGBTurnOffLED
+                  0x0018a2                  _RGBTurnOnLED
+                  0x001372                  _ReadCTMU
+                  0x0012de                  _ReadPotentiometer
                   0x00067a                  _ResetDevice
-                  0x001786                  _SetRGBs
-                  0x001770                  _ShowCalibrationScreen
-                  0x001004                  _ShowMenu
+                  0x0017c2                  _SetRGBs
+                  0x0017ac                  _ShowCalibrationScreen
+                  0x00100a                  _ShowMenu
                   0x000564                  _SingleDeviceRead
                   0x0002c8                  __DefaultInterrupt
                   0x0002ce                  ___udivsi3
@@ -223,7 +225,7 @@ External Symbols in Program Memory (by name):
                   0x000252                  __data_init_standard
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
-                  0x0018b6                  _delay_ms
+                  0x0018f2                  _delay_ms
                   0x000c72                  _main
 
 Memory Configuration
@@ -314,36 +316,36 @@ __CONFIG1
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x3dab
+.debug_info       0x000000       0x3de8
  *(.debug_info)
  .debug_info      0x000000       0x1451 build/default/debug/SH1101A.o
- .debug_info      0x001451        0x644 build/default/debug/main.o
- .debug_info      0x001a95        0xc78 build/default/debug/TouchSense.o
- .debug_info      0x00270d        0xdc6 build/default/debug/RGBLeds.o
- .debug_info      0x0034d3        0x3e5 build/default/debug/DisplayUtils.o
- .debug_info      0x0038b8        0x466 build/default/debug/SystemUtils.o
- .debug_info      0x003d1e         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_info      0x001451        0x681 build/default/debug/main.o
+ .debug_info      0x001ad2        0xc78 build/default/debug/TouchSense.o
+ .debug_info      0x00274a        0xdc6 build/default/debug/RGBLeds.o
+ .debug_info      0x003510        0x3e5 build/default/debug/DisplayUtils.o
+ .debug_info      0x0038f5        0x466 build/default/debug/SystemUtils.o
+ .debug_info      0x003d5b         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x748
+.debug_abbrev     0x000000        0x766
  *(.debug_abbrev)
  .debug_abbrev    0x000000        0x1b9 build/default/debug/SH1101A.o
- .debug_abbrev    0x0001b9        0x109 build/default/debug/main.o
- .debug_abbrev    0x0002c2        0x1b4 build/default/debug/TouchSense.o
- .debug_abbrev    0x000476         0xe9 build/default/debug/RGBLeds.o
- .debug_abbrev    0x00055f         0xce build/default/debug/DisplayUtils.o
- .debug_abbrev    0x00062d        0x107 build/default/debug/SystemUtils.o
- .debug_abbrev    0x000734         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_abbrev    0x0001b9        0x127 build/default/debug/main.o
+ .debug_abbrev    0x0002e0        0x1b4 build/default/debug/TouchSense.o
+ .debug_abbrev    0x000494         0xe9 build/default/debug/RGBLeds.o
+ .debug_abbrev    0x00057d         0xce build/default/debug/DisplayUtils.o
+ .debug_abbrev    0x00064b        0x107 build/default/debug/SystemUtils.o
+ .debug_abbrev    0x000752         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
 
-.debug_line       0x000000        0x8cc
+.debug_line       0x000000        0x8d9
  *(.debug_line)
  .debug_line      0x000000        0x241 build/default/debug/SH1101A.o
- .debug_line      0x000241        0x1ef build/default/debug/main.o
- .debug_line      0x000430        0x174 build/default/debug/TouchSense.o
- .debug_line      0x0005a4        0x10e build/default/debug/RGBLeds.o
- .debug_line      0x0006b2         0xce build/default/debug/DisplayUtils.o
- .debug_line      0x000780        0x107 build/default/debug/SystemUtils.o
- .debug_line      0x000887         0x45 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_line      0x000241        0x1fc build/default/debug/main.o
+ .debug_line      0x00043d        0x174 build/default/debug/TouchSense.o
+ .debug_line      0x0005b1        0x10e build/default/debug/RGBLeds.o
+ .debug_line      0x0006bf         0xce build/default/debug/DisplayUtils.o
+ .debug_line      0x00078d        0x107 build/default/debug/SystemUtils.o
+ .debug_line      0x000894         0x45 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
 
 .debug_frame      0x000000        0x372
  *(.debug_frame)
@@ -354,13 +356,13 @@ __CONFIG1
  .debug_frame     0x0002ae         0x96 build/default/debug/DisplayUtils.o
  .debug_frame     0x000344         0x2e build/default/debug/SystemUtils.o
 
-.debug_str        0x000000        0x12f
+.debug_str        0x000000        0x14d
  *(.debug_str)
  .debug_str       0x000000         0x3b build/default/debug/SH1101A.o
- .debug_str       0x00003b         0x31 build/default/debug/main.o
- .debug_str       0x00006c         0x5c build/default/debug/TouchSense.o
- .debug_str       0x0000c8         0x48 build/default/debug/RGBLeds.o
- .debug_str       0x000110         0x1f build/default/debug/SystemUtils.o
+ .debug_str       0x00003b         0x4f build/default/debug/main.o
+ .debug_str       0x00008a         0x5c build/default/debug/TouchSense.o
+ .debug_str       0x0000e6         0x48 build/default/debug/RGBLeds.o
+ .debug_str       0x00012e         0x1f build/default/debug/SystemUtils.o
 
 .debug_loc
  *(.debug_loc)
@@ -369,20 +371,20 @@ __CONFIG1
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000        0x330
+                  0x000000        0x346
  *(.debug_pubnames)
  .debug_pubnames
                   0x000000         0xd0 build/default/debug/SH1101A.o
  .debug_pubnames
-                  0x0000d0         0x7e build/default/debug/main.o
+                  0x0000d0         0x94 build/default/debug/main.o
  .debug_pubnames
-                  0x00014e         0xe0 build/default/debug/TouchSense.o
+                  0x000164         0xe0 build/default/debug/TouchSense.o
  .debug_pubnames
-                  0x00022e         0x55 build/default/debug/RGBLeds.o
+                  0x000244         0x55 build/default/debug/RGBLeds.o
  .debug_pubnames
-                  0x000283         0x7e build/default/debug/DisplayUtils.o
+                  0x000299         0x7e build/default/debug/DisplayUtils.o
  .debug_pubnames
-                  0x000301         0x2f build/default/debug/SystemUtils.o
+                  0x000317         0x2f build/default/debug/SystemUtils.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1538,7 +1540,7 @@ __c30_signature
  __c30_signature
                   0x00046d          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
 
-.nbss               0x0850         0x12
+.nbss               0x0850          0xc
  .nbss              0x0850          0xc build/default/debug/TouchSense.o
                     0x0850                  __potADC
                     0x0852                  _first
@@ -1547,30 +1549,31 @@ __c30_signature
                     0x0856                  _bigVal
                     0x0858                  _smallAvg
                     0x085a                  _AvgIndex
- .nbss              0x085c          0x4 build/default/debug/SystemUtils.o
-                    0x085c                  _globalTimer
- .nbss              0x0860          0x2 build/default/debug/SH1101A.o
-                    0x0860                  __color
 
-.ndata              0x0862          0x2
- .ndata             0x0862          0x2 build/default/debug/main.o
-                    0x0862                  _codeLength
+.ndata              0x085c          0x4
+ .ndata             0x085c          0x4 build/default/debug/main.o
+                    0x085c                  _codeLength
+                    0x085e                  _lastDisplayedTime
 
-.nbss               0x0864          0x2
- .nbss              0x0864          0x2 build/default/debug/main.o
-                    0x0864                  _failedAttempts
+.nbss               0x0860          0x8
+ .nbss              0x0860          0x4 build/default/debug/SystemUtils.o
+                    0x0860                  _globalTimer
+ .nbss              0x0864          0x2 build/default/debug/SH1101A.o
+                    0x0864                  __color
+ .nbss              0x0866          0x2 build/default/debug/main.o
+                    0x0866                  _failedAttempts
 
-.bss                0x0866         0x2e
- .bss               0x0866         0x2e build/default/debug/TouchSense.o
-                    0x0866                  _buttons
-                    0x086c                  _rawCTMU
-                    0x0876                  _average
-                    0x0880                  _trip
-                    0x088a                  _hyst
+.bss                0x0868         0x2e
+ .bss               0x0868         0x2e build/default/debug/TouchSense.o
+                    0x0868                  _buttons
+                    0x086e                  _rawCTMU
+                    0x0878                  _average
+                    0x0882                  _trip
+                    0x088c                  _hyst
 
-.data               0x0894          0x8
- .data              0x0894          0x8 build/default/debug/main.o
-                    0x0894                  _secretCode
+.data               0x0896          0x8
+ .data              0x0896          0x8 build/default/debug/main.o
+                    0x0896                  _secretCode
 
 .config_JTAGEN    0x02abfe          0x2
  .config_JTAGEN
@@ -1587,7 +1590,7 @@ __c30_signature
  .const             0x83d2         0xd8 build/default/debug/DisplayUtils.o
                     0x83d2                  _FONT
 
-.text             0x0004aa       0x1456
+.text             0x0004aa       0x1492
  .text            0x0004aa        0x7c8 build/default/debug/SH1101A.o
                   0x0004aa                  _Delay10us
                   0x0004f2                  _DelayMs
@@ -1600,29 +1603,29 @@ __c30_signature
                   0x00094e                  _PutPixel
                   0x000ad8                  _GetPixel
                   0x000bf0                  _ClearDevice
- .text            0x000c72        0x630 build/default/debug/main.o
+ .text            0x000c72        0x66c build/default/debug/main.o
                   0x000c72                  _main
-                  0x001004                  _ShowMenu
-                  0x0010be                  _ChangePassword
-                  0x001248                  _HandleLockout
- .text            0x0012a2        0x2ea build/default/debug/TouchSense.o
-                  0x0012a2                  _ReadPotentiometer
-                  0x0012c8                  _CTMUInit
-                  0x001336                  _ReadCTMU
-                  0x001568                  _GetPressedButton
- .text            0x00158c        0x1fa build/default/debug/DisplayUtils.o
-                  0x00158c                  _DrawChar
-                  0x00164e                  _DrawString
-                  0x001682                  _DisplayPasswordProgress
-                  0x0016e2                  _DisplayTimer
-                  0x001770                  _ShowCalibrationScreen
- .text            0x001786        0x130 build/default/debug/RGBLeds.o
-                  0x001786                  _SetRGBs
-                  0x0017d8                  _RGBMapColorPins
-                  0x001848                  _RGBTurnOffLED
-                  0x001866                  _RGBTurnOnLED
- .text            0x0018b6         0x4a build/default/debug/SystemUtils.o
-                  0x0018b6                  _delay_ms
+                  0x00100a                  _ShowMenu
+                  0x0010da                  _ChangePassword
+                  0x001284                  _HandleLockout
+ .text            0x0012de        0x2ea build/default/debug/TouchSense.o
+                  0x0012de                  _ReadPotentiometer
+                  0x001304                  _CTMUInit
+                  0x001372                  _ReadCTMU
+                  0x0015a4                  _GetPressedButton
+ .text            0x0015c8        0x1fa build/default/debug/DisplayUtils.o
+                  0x0015c8                  _DrawChar
+                  0x00168a                  _DrawString
+                  0x0016be                  _DisplayPasswordProgress
+                  0x00171e                  _DisplayTimer
+                  0x0017ac                  _ShowCalibrationScreen
+ .text            0x0017c2        0x130 build/default/debug/RGBLeds.o
+                  0x0017c2                  _SetRGBs
+                  0x001814                  _RGBMapColorPins
+                  0x001884                  _RGBTurnOffLED
+                  0x0018a2                  _RGBTurnOnLED
+ .text            0x0018f2         0x4a build/default/debug/SystemUtils.o
+                  0x0018f2                  _delay_ms
 
-.dinit            0x001900         0x34
- .dinit           0x001900         0x34 data_init
+.dinit            0x00193c         0x36
+ .dinit           0x00193c         0x36 data_init
