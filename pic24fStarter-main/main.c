@@ -16,11 +16,14 @@ uint8_t secretCode[8] = {3, 0, 1, 2, 0, 0, 0, 0};
 int codeLength = 4; // Replaced #define w  ith variable
 int failedAttempts = 0; 
 int lastDisplayedTime = -1;
+int loggedInUserIndex = -1; // Stores the index (0-4) of the current user
 // --- Prototypes ---
 void ShowMenu(void);
 void ChangePassword(void);
 void HandleLockout(void);
 void EnterSleepMode(void);
+void UserAction_Add(int userId);
+void UserAction_EditDelete(int userIndex);
 int main(void) {
     // 1. Initialization
     INIT_CLOCK(); 
@@ -29,9 +32,8 @@ int main(void) {
     RGBTurnOnLED();
     ResetDevice();
     
-    // Load Code from Flash
-    LoadCodeFromFlash(secretCode, &codeLength);
-    
+// --- STEP 2: LOAD FROM FLASH ---
+    LoadUsersFromFlash(); // <--- CHANGE THIS LINE
     // Calibration
     SetColor(BLACK); ClearDevice();
     SetColor(WHITE); DrawString(10, 20, "CALIBRATING");
@@ -196,36 +198,64 @@ int main(void) {
             }
             
             // Check Code
-            if (currentStep == codeLength) {
-                timerActive = 0;
+            if (currentStep >= 4) { // Only check if at least 4 digits entered
                 
-                int isCorrect = 1;
-                for (int i = 0; i < codeLength; i++) {
-                    if (enteredCode[i] != secretCode[i]) {
-                        isCorrect = 0;
-                        break;
+                timerActive = 0; // Stop timer while checking
+                int foundUserIndex = -1;
+
+                // --- SCAN DATABASE ---
+                for(int i = 0; i < MAX_USERS; i++) {
+                    if(userDB[i].isActive) {
+                        // 1. Check Length
+                        if(currentStep != userDB[i].codeLength) continue;
+
+                        // 2. Check Code
+                        int match = 1;
+                        for(int j = 0; j < currentStep; j++) {
+                            if(enteredCode[j] != userDB[i].code[j]) { 
+                                match = 0; 
+                                break; 
+                            }
+                        }
+
+                        if(match) {
+                            foundUserIndex = i;
+                            break; // Found a valid user! Stop scanning.
+                        }
                     }
                 }
                 
                 SetColor(BLACK); ClearDevice(); SetColor(WHITE);
                 
-                if (isCorrect) {
+                if (foundUserIndex != -1) {
+                    // --- SUCCESS ---
+                    loggedInUserIndex = foundUserIndex; // <--- SAVE THE USER ID HERE
+                    
                     failedAttempts = 0;
-                    DrawString(10, 20, "UNLOCKED");
+                    
+                    // Show specific user ID
+                    char msg[16];
+                    sprintf(msg, "USER %d", userDB[foundUserIndex].id);
+                    DrawString(10, 10, "WELCOME:");
+                    DrawString(10, 25, msg);
+                    
                     SetRGBs(0, 255, 0); 
-                    delay_ms(1000);
+                    delay_ms(2000);
                     
-                    ShowMenu(); // Enter Menu
-                    
-                    // Reset after Menu exit
+                    // (Menu Logic would go here later)
+                    // For now, just reset
+                    ShowMenu();
                     isStandby = 1; 
-                    lastActivityTime = globalTimer; // Reset timer for standby
+                    lastActivityTime = globalTimer; 
                     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
                     DrawString(10, 20, "STANDBY");
                     DrawString(10, 35, "PRESS CENTER");
                     SetRGBs(255, 0, 0); 
                     
                 } else {
+                    // --- FAILURE ---
+                    // Only fail if we reached 8 digits OR user stopped typing (timeout)
+                    // But for this simple test, if it didn't match any user, it fails.
                     DrawString(10, 15, "KEY WRONG");
                     SetRGBs(255, 0, 0); 
                     
@@ -243,6 +273,54 @@ int main(void) {
                 currentStep = 0;
                 isBlinking = 0;
             }
+//            if (currentStep == codeLength) {
+//                timerActive = 0;
+//                
+//                int isCorrect = 1;
+//                for (int i = 0; i < codeLength; i++) {
+//                    if (enteredCode[i] != secretCode[i]) {
+//                        isCorrect = 0;
+//                        break;
+//                    }
+//                }
+//                
+//                SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+//                
+//                if (isCorrect) {
+//                    failedAttempts = 0;
+//                    DrawString(10, 20, "UNLOCKED");
+//                    SetRGBs(0, 255, 0); 
+//                    delay_ms(1000);
+//                    
+//                    ShowMenu(); // Enter Menu
+//                    
+//                    // Reset after Menu exit
+//                    isStandby = 1; 
+//                    lastActivityTime = globalTimer; // Reset timer for standby
+//                    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+//                    DrawString(10, 20, "STANDBY");
+//                    DrawString(10, 35, "PRESS CENTER");
+//                    SetRGBs(255, 0, 0); 
+//                    
+//                } else {
+//                    DrawString(10, 15, "KEY WRONG");
+//                    SetRGBs(255, 0, 0); 
+//                    
+//                    failedAttempts++;
+//                    if (failedAttempts >= 3) {
+//                        HandleLockout(); 
+//                    } else {
+//                        delay_ms(2000); 
+//                    }
+//                    
+//                    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+//                    DrawString(10, 10, "ENTER KEY");
+//                    lastActivityTime = globalTimer;
+//                }
+//                currentStep = 0;
+//                isBlinking = 0;
+//            }
+            delay_ms(250);
         }
 
         if (currentButton == -1 && lastButtonState != -1) {
@@ -259,13 +337,64 @@ int main(void) {
 // ============================================
 
 
+//void ShowMenu(void) {
+//    int selection = 0; 
+//    int inMenu = 1;
+//    int lastBtn = -1;
+//    int needsRedraw = 1; 
+//    
+//    // Local Timer for Menu Timeout
+//    unsigned long menuTimer = globalTimer;
+//
+//    while(GetPressedButton() != -1) ReadCTMU();
+//
+//    while(inMenu) {
+//        ReadCTMU();
+//        int btn = GetPressedButton();
+//        
+//        // --- TIMEOUT CHECK ---
+//        if (globalTimer - menuTimer > 30000) {
+//            return; // Exit to Main -> Main puts us in Standby
+//        }
+//        
+//        if (needsRedraw) {
+//            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+//            DrawString(10, 5, "MAIN MENU");
+//            if (selection == 0) DrawString(10, 25, "> LOCK SYSTEM");
+//            else DrawString(10, 25, "  LOCK SYSTEM");
+//            if (selection == 1) DrawString(10, 40, "> CHANGE KEY");
+//            else DrawString(10, 40, "  CHANGE KEY");
+//            needsRedraw = 0; 
+//        }
+//        
+//        if (btn != -1 && btn != lastBtn) {
+//            menuTimer = globalTimer; // Reset Timer on Input
+//            
+//            if (btn == 0 || btn == 2) { 
+//                selection = !selection; 
+//                needsRedraw = 1; 
+//            } 
+//            else if (btn == 4 || btn == 1) { 
+//                if (selection == 0) inMenu = 0; 
+//                else {
+//                    ChangePassword(); 
+//                    needsRedraw = 1; 
+//                    menuTimer = globalTimer; // Reset when returning
+//                }
+//            }
+//            delay_ms(150);
+//        }
+//        lastBtn = btn;
+//        delay_ms(50);
+//    }
+//}
+//
+
 void ShowMenu(void) {
     int selection = 0; 
     int inMenu = 1;
     int lastBtn = -1;
     int needsRedraw = 1; 
-    
-    // Local Timer for Menu Timeout
     unsigned long menuTimer = globalTimer;
 
     while(GetPressedButton() != -1) ReadCTMU();
@@ -273,35 +402,53 @@ void ShowMenu(void) {
     while(inMenu) {
         ReadCTMU();
         int btn = GetPressedButton();
-        
-        // --- TIMEOUT CHECK ---
-        if (globalTimer - menuTimer > 30000) {
-            return; // Exit to Main -> Main puts us in Standby
-        }
+        if (globalTimer - menuTimer > 30000) return; 
         
         if (needsRedraw) {
             SetColor(BLACK); ClearDevice(); SetColor(WHITE);
             DrawString(10, 5, "MAIN MENU");
+            
+            // OPTION 0: LOCK SYSTEM (Everyone sees this)
             if (selection == 0) DrawString(10, 25, "> LOCK SYSTEM");
             else DrawString(10, 25, "  LOCK SYSTEM");
-            if (selection == 1) DrawString(10, 40, "> CHANGE KEY");
-            else DrawString(10, 40, "  CHANGE KEY");
+            
+            // OPTION 1: VARIES BY USER
+            if (userDB[loggedInUserIndex].id == 1) {
+                // ADMIN (User 1) SEES:
+                if (selection == 1) DrawString(10, 40, "> MANAGE USERS");
+                else DrawString(10, 40, "  MANAGE USERS");
+            } else {
+                // STANDARD USER SEES:
+                if (selection == 1) DrawString(10, 40, "> CHANGE MY KEY");
+                else DrawString(10, 40, "  CHANGE MY KEY");
+            }
             needsRedraw = 0; 
         }
         
         if (btn != -1 && btn != lastBtn) {
-            menuTimer = globalTimer; // Reset Timer on Input
-            
+            menuTimer = globalTimer; 
             if (btn == 0 || btn == 2) { 
                 selection = !selection; 
                 needsRedraw = 1; 
             } 
-            else if (btn == 4 || btn == 1) { 
-                if (selection == 0) inMenu = 0; 
+            else if (btn == 4 || btn == 1) { // Select
+                if (selection == 0) {
+                    inMenu = 0; // Lock System
+                } 
                 else {
-                    ChangePassword(); 
+                    // SELECTION 1 LOGIC
+                    if (userDB[loggedInUserIndex].id == 1) {
+                        // Admin -> Go to Full List
+                        ManageUsers();
+                    } else {
+     // Standard User -> Go to Edit Logic
+                        // We reuse "Add" because it handles entering a new code perfectly
+                        UserAction_Add(userDB[loggedInUserIndex].id); 
+                        
+                        SaveUsersToFlash(); //
+                    }
                     needsRedraw = 1; 
-                    menuTimer = globalTimer; // Reset when returning
+                    menuTimer = globalTimer; 
                 }
             }
             delay_ms(150);
@@ -466,4 +613,210 @@ void EnterSleepMode(void) {
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
     DrawString(10, 10, "ENTER KEY");
     SetRGBs(255, 0, 0);     // Red LED
+}
+
+
+void ManageUsers(void) {
+    int selectedUser = 0; // Index 0 to 4 (User 1 to 5)
+    int inSubMenu = 1;
+    int lastBtn = -1;
+    int needsRedraw = 1;
+    unsigned long subTimer = globalTimer;
+    char buffer[20];
+
+    while(GetPressedButton() != -1) ReadCTMU();
+
+    while(inSubMenu) {
+        ReadCTMU();
+        int btn = GetPressedButton();
+
+        // Timeout
+        if (globalTimer - subTimer > 30000) return;
+
+        if (needsRedraw) {
+            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+            DrawString(10, 5, "USER LIST");
+
+            // --- FIX: CALCULATE ID DYNAMICALLY ---
+            // Use (selectedUser + 1) instead of .id to ensure it's always 1-5
+            sprintf(buffer, "< USER %02d >", selectedUser + 1); 
+            DrawString(10, 25, buffer);
+
+            if (userDB[selectedUser].isActive) {
+                DrawString(10, 40, "STATUS: ACTIVE");
+            } else {
+                DrawString(10, 40, "STATUS: EMPTY");
+            }
+
+            needsRedraw = 0;
+        }
+
+        if (btn != -1 && btn != lastBtn) {
+            subTimer = globalTimer;
+
+            if (btn == 0) { // UP -> Next
+                selectedUser++;
+                if (selectedUser >= MAX_USERS) selectedUser = 0;
+                needsRedraw = 1;
+            } 
+            else if (btn == 2) { // DOWN -> Prev
+                selectedUser--;
+                if (selectedUser < 0) selectedUser = MAX_USERS - 1;
+                needsRedraw = 1;
+            }
+            else if (btn == 3) { // LEFT -> Back
+                inSubMenu = 0;
+            }
+            else if (btn == 4) { // CENTER -> Select User
+                // Check if Empty or Active
+                if (userDB[selectedUser].isActive) {
+                    // Active -> Go to Edit/Delete
+                    UserAction_EditDelete(selectedUser);
+                } else {
+                    // Empty -> Go to Add New User
+                    // FIX: Pass (selectedUser + 1) as the ID
+                    UserAction_Add(selectedUser + 1); 
+                }
+                needsRedraw = 1; // Redraw list when coming back
+                SaveUsersToFlash(); // Save any changes immediately
+            }
+            
+            delay_ms(150);
+        }
+        lastBtn = btn;
+        delay_ms(50);
+    }
+}
+// --- LOGIC FOR ADDING A NEW USER ---
+// Used for both creating new users and editing existing ones
+void UserAction_Add(int userId) {
+    int newLen = 4;
+    int choosing = 1;
+    int lastBtn = -1;
+    int needsRedraw = 1; 
+    
+    // 1. Choose Length
+    while(GetPressedButton() != -1) ReadCTMU();
+    
+    while(choosing) {
+        ReadCTMU();
+        int btn = GetPressedButton();
+        
+        if (needsRedraw) {
+            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+            char title[20];
+            sprintf(title, "NEW USER %02d", userId);
+            DrawString(10, 5, title);
+            
+            if (newLen == 4) DrawString(10, 25, "> 4 DIGITS");
+            else DrawString(10, 25, "  4 DIGITS");
+            
+            if (newLen == 8) DrawString(10, 40, "> 8 DIGITS");
+            else DrawString(10, 40, "  8 DIGITS");
+            needsRedraw = 0;
+        }
+        
+        if (btn != -1 && btn != lastBtn) {
+            if (btn == 0 || btn == 2) { 
+                newLen = (newLen == 4) ? 8 : 4; 
+                needsRedraw = 1; 
+            }
+            else if (btn == 4 || btn == 1) choosing = 0;
+            delay_ms(150);
+        }
+        lastBtn = btn;
+        delay_ms(50);
+    }
+    
+    // 2. Enter Code
+    int count = 0;
+    uint8_t temp[8];
+    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+    DrawString(10, 10, "ENTER CODE:");
+    
+    while(GetPressedButton() != -1) ReadCTMU();
+    lastBtn = -1;
+    
+    while(count < newLen) {
+        ReadCTMU();
+        int btn = GetPressedButton();
+        if (btn != -1 && btn != lastBtn) {
+            if (btn == 4) continue; // Skip Center
+            
+            temp[count] = btn;
+            count++;
+            
+            SetColor(WHITE);
+            for(int i=0; i<count; i++) DrawChar(10 + (i*6), 30, '*');
+            SetRGBs(0, 0, 255); delay_ms(100); SetRGBs(0, 255, 0);
+        }
+        lastBtn = btn;
+    }
+    
+    // 3. Save to RAM (Main loop saves to Flash later)
+    int idx = userId - 1; // ID 1 is Index 0
+    userDB[idx].id = userId; // Ensure ID is set correctly
+    userDB[idx].isActive = 1;
+    userDB[idx].codeLength = newLen;
+    for(int i=0; i<8; i++) userDB[idx].code[i] = temp[i];
+    
+    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+    DrawString(10, 25, "USER ADDED!");
+    delay_ms(1500);
+}
+
+// --- LOGIC FOR EDITING (CHANGE PASS) OR DELETING ---
+void UserAction_EditDelete(int userIndex) {
+    int selection = 0; // 0=EDIT, 1=DELETE
+    int choosing = 1;
+    int lastBtn = -1;
+    int needsRedraw = 1;
+    
+    while(GetPressedButton() != -1) ReadCTMU();
+    
+    while(choosing) {
+        ReadCTMU();
+        int btn = GetPressedButton();
+        
+        if (needsRedraw) {
+            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+            char title[20];
+            
+            // FIX: Use (userIndex + 1) to calculate ID
+            sprintf(title, "USER %02d", userIndex + 1); 
+            DrawString(10, 5, title);
+            
+            if (selection == 0) DrawString(10, 25, "> EDIT KEY");
+            else DrawString(10, 25, "  EDIT KEY");
+            
+            if (selection == 1) DrawString(10, 40, "> DELETE USER");
+            else DrawString(10, 40, "  DELETE USER");
+            needsRedraw = 0;
+        }
+        
+        if (btn != -1 && btn != lastBtn) {
+            if (btn == 0 || btn == 2) { // Up/Down
+                selection = !selection; 
+                needsRedraw = 1; 
+            }
+            else if (btn == 4 || btn == 1) { // Select
+                if (selection == 0) {
+                    // EDIT -> Call Add logic to overwrite
+                    // FIX: Pass correct ID
+                    UserAction_Add(userIndex + 1); 
+                } else {
+                    // DELETE -> Mark as empty
+                    userDB[userIndex].isActive = 0;
+                    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+                    DrawString(10, 25, "DELETED!");
+                    delay_ms(1500);
+                }
+                choosing = 0;
+            }
+            else if (btn == 3) choosing = 0; // Left = Back
+            delay_ms(150);
+        }
+        lastBtn = btn;
+        delay_ms(50);
+    }
 }
