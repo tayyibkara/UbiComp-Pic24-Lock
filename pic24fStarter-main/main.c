@@ -458,90 +458,92 @@ void ShowMenu(void) {
     }
 }
 
-void ChangePassword(void) {
-    int newLen = 4;
-    int choosing = 1;
-    int lastBtn = -1;
-    int needsRedraw = 1; 
-    
-    unsigned long subMenuTimer = globalTimer; // Local Timer
-    
-    while(GetPressedButton() != -1) ReadCTMU();
-    
-    // --- STEP 1: CHOOSE LENGTH ---
-    while(choosing) {
-        ReadCTMU();
-        int btn = GetPressedButton();
-        
-        // Timeout Check
-        if (globalTimer - subMenuTimer > 30000) return;
-        
-        if (needsRedraw) {
-            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-            DrawString(10, 5, "LENGTH?");
-            if (newLen == 4) DrawString(10, 25, "> 4 DIGITS");
-            else DrawString(10, 25, "  4 DIGITS");
-            if (newLen == 8) DrawString(10, 40, "> 8 DIGITS");
-            else DrawString(10, 40, "  8 DIGITS");
-            needsRedraw = 0;
-        }
-        
-        if (btn != -1 && btn != lastBtn) {
-            subMenuTimer = globalTimer; // Reset Timer
-            if (btn == 0 || btn == 2) { 
-                newLen = (newLen == 4) ? 8 : 4;
-                needsRedraw = 1; 
-            }
-            else if (btn == 4 || btn == 1) choosing = 0;
-            delay_ms(150);
-        }
-        lastBtn = btn;
-        delay_ms(50);
-    }
-    
-    // --- STEP 2: ENTER NEW CODE ---
-    int count = 0;
-    uint8_t temp[8];
-    subMenuTimer = globalTimer; // Reset Timer for Step 2
-    
-    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-    DrawString(10, 10, "ENTER NEW:");
-    
-    while(GetPressedButton() != -1) ReadCTMU();
-    lastBtn = -1;
-    
-    while(count < newLen) {
-        ReadCTMU();
-        int btn = GetPressedButton();
-        
-        // Timeout Check
-        if (globalTimer - subMenuTimer > 30000) return;
-        
-        if (btn != -1 && btn != lastBtn) {
-            subMenuTimer = globalTimer; // Reset Timer
-            if (btn == 4) continue; 
-            
-            temp[count] = btn;
-            count++;
-            
-            SetColor(WHITE);
-            for(int i=0; i<count; i++) DrawChar(10 + (i*6), 30, '*');
-            SetRGBs(0, 0, 255); delay_ms(100); SetRGBs(0, 255, 0);
-        }
-        lastBtn = btn;
-    }
-    
-    // Save Logic (No changes here)
-    codeLength = newLen;
-    for(int i=0; i<8; i++) {
-        if(i < newLen) secretCode[i] = temp[i];
-        else secretCode[i] = 0;
-    }
-    SaveCodeToFlash(secretCode, codeLength);
-    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-    DrawString(10, 25, "SAVED!");
-    delay_ms(1500);
-}
+//void ChangePassword(void) {
+//    int newLen = 4;
+//    int choosing = 1;
+//    int lastBtn = -1;
+//    int needsRedraw = 1; 
+//    
+//    unsigned long subMenuTimer = globalTimer; // Local Timer
+//    
+//    while(GetPressedButton() != -1) ReadCTMU();
+//    
+//    // --- STEP 1: CHOOSE LENGTH ---
+//    while(choosing) {
+//        ReadCTMU();
+//        int btn = GetPressedButton();
+//        
+//        // Timeout Check
+//        if (globalTimer - subMenuTimer > 30000) return;
+//        
+//        if (needsRedraw) {
+//            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+//            DrawString(10, 5, "LENGTH?");
+//            if (newLen == 4) DrawString(10, 25, "> 4 DIGITS");
+//            else DrawString(10, 25, "  4 DIGITS");
+//            if (newLen == 8) DrawString(10, 40, "> 8 DIGITS");
+//            else DrawString(10, 40, "  8 DIGITS");
+//            needsRedraw = 0;
+//        }
+//        
+//        if (btn != -1 && btn != lastBtn) {
+//            subMenuTimer = globalTimer; // Reset Timer
+//            if (btn == 0 || btn == 2) { 
+//                newLen = (newLen == 4) ? 8 : 4;
+//                needsRedraw = 1; 
+//            }
+//            else if (btn == 4 || btn == 1) choosing = 0;
+//            delay_ms(150);
+//        }
+//        lastBtn = btn;
+//        delay_ms(50);
+//    }
+//    
+//    // --- STEP 2: ENTER NEW CODE ---
+//    int count = 0;
+//    uint8_t temp[8];
+//    subMenuTimer = globalTimer; // Reset Timer for Step 2
+//    
+//    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+//    DrawString(10, 10, "ENTER NEW:");
+//    
+//    while(GetPressedButton() != -1) ReadCTMU();
+//    lastBtn = -1;
+//    
+//    while(count < newLen) {
+//        ReadCTMU();
+//        int btn = GetPressedButton();
+//        
+//        // Timeout Check
+//        if (globalTimer - subMenuTimer > 30000) return;
+//        
+//        if (btn != -1 && btn != lastBtn) {
+//            subMenuTimer = globalTimer; // Reset Timer
+//            if (btn == 4) continue; 
+//            
+//            temp[count] = btn;
+//            count++;
+//            
+//            SetColor(WHITE);
+//            for(int i=0; i<count; i++) DrawChar(10 + (i*6), 30, '*');
+//            SetRGBs(0, 0, 255); delay_ms(100); SetRGBs(0, 255, 0);
+//        }
+//        lastBtn = btn;
+//    }
+//    
+//    // Save Logic (No changes here)
+//    codeLength = newLen;
+//    for(int i=0; i<8; i++) {
+//        if(i < newLen) secretCode[i] = temp[i];
+//        else secretCode[i] = 0;
+//    }
+//    SaveCodeToFlash(secretCode, codeLength);
+//    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
+//    DrawString(10, 25, "SAVED!");
+//    delay_ms(1500);
+//}
+//
+//
 
 void HandleLockout(void) {
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
@@ -684,11 +686,13 @@ void ManageUsers(void) {
             delay_ms(150);
         }
         lastBtn = btn;
-        delay_ms(50);
+        delay_ms(100);
     }
 }
 // --- LOGIC FOR ADDING A NEW USER ---
 // Used for both creating new users and editing existing ones
+
+// [REPLACE UserAction_Add WITH THIS FIXED VERSION]
 void UserAction_Add(int userId) {
     int newLen = 4;
     int choosing = 1;
@@ -722,15 +726,18 @@ void UserAction_Add(int userId) {
                 needsRedraw = 1; 
             }
             else if (btn == 4 || btn == 1) choosing = 0;
-            delay_ms(150);
+            
+            // DEBOUNCE HERE (Only when button pressed)
+            delay_ms(250); 
         }
         lastBtn = btn;
-        delay_ms(50);
+        delay_ms(50); // Fast polling when idle
     }
     
     // 2. Enter Code
     int count = 0;
-    uint8_t temp[8];
+    uint8_t temp[8] = {0}; // Initialize to zeros
+    
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
     DrawString(10, 10, "ENTER CODE:");
     
@@ -740,6 +747,7 @@ void UserAction_Add(int userId) {
     while(count < newLen) {
         ReadCTMU();
         int btn = GetPressedButton();
+        
         if (btn != -1 && btn != lastBtn) {
             if (btn == 4) continue; // Skip Center
             
@@ -749,13 +757,19 @@ void UserAction_Add(int userId) {
             SetColor(WHITE);
             for(int i=0; i<count; i++) DrawChar(10 + (i*6), 30, '*');
             SetRGBs(0, 0, 255); delay_ms(100); SetRGBs(0, 255, 0);
+            
+            // [CRITICAL FIX]
+            // Delay ONLY happens after a valid press to stop bouncing
+            delay_ms(250); 
         }
+        
         lastBtn = btn;
+        delay_ms(50); // Keep system responsive (check 20 times/sec)
     }
     
-    // 3. Save to RAM (Main loop saves to Flash later)
-    int idx = userId - 1; // ID 1 is Index 0
-    userDB[idx].id = userId; // Ensure ID is set correctly
+    // 3. Save to RAM
+    int idx = userId - 1; 
+    userDB[idx].id = userId; 
     userDB[idx].isActive = 1;
     userDB[idx].codeLength = newLen;
     for(int i=0; i<8; i++) userDB[idx].code[i] = temp[i];
@@ -764,7 +778,6 @@ void UserAction_Add(int userId) {
     DrawString(10, 25, "USER ADDED!");
     delay_ms(1500);
 }
-
 // --- LOGIC FOR EDITING (CHANGE PASS) OR DELETING ---
 void UserAction_EditDelete(int userIndex) {
     int selection = 0; // 0=EDIT, 1=DELETE
@@ -817,6 +830,6 @@ void UserAction_EditDelete(int userIndex) {
             delay_ms(150);
         }
         lastBtn = btn;
-        delay_ms(50);
+        delay_ms(100);
     }
 }

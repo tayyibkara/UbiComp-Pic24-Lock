@@ -25,8 +25,8 @@ extern volatile unsigned long globalTimer;
 void delay_ms(unsigned int milliseconds);
 
 // Flash storage functions for persistent code storage
-void SaveCodeToFlash(uint8_t* code, int length);
-void LoadCodeFromFlash(uint8_t* code, int* length);
+//void SaveCodeToFlash(uint8_t* code, int length);
+//void LoadCodeFromFlash(uint8_t* code, int* length);
 // --- FLASH FUNCTIONS ---
 void LoadUsersFromFlash(void);
 void SaveUsersToFlash(void);

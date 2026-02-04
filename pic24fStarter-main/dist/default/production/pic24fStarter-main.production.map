@@ -124,14 +124,15 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0xef8          0x1674  (5748)
-.const                      0x10f8               0x288           0x3cc  (972)
-.text                       0x1380              0x141a          0x1e27  (7719)
-.dinit                      0x279a                0x5c            0x8a  (138)
-_0610d5a069812c9c           0x2800               0x400           0x600  (1536)
-_0610d64069812c9c           0x2c00               0x400           0x600  (1536)
-.text                       0x3000               0x944           0xde6  (3558)
+.const                      0x10f8               0x26e           0x3a5  (933)
+.text                       0x1366              0x1222          0x1b33  (6963)
+.text                       0x2588               0x1fa           0x2f7  (759)
+.dinit                      0x2782                0x5c            0x8a  (138)
+_05fce5a069827dfb           0x2800               0x400           0x600  (1536)
+.text                       0x2c00               0x2ea           0x45f  (1119)
+.text                       0x2eea               0x2c2           0x423  (1059)
 
-                 Total "program" memory used (bytes):         0x52d7  (21207) 8%
+                 Total "program" memory used (bytes):         0x474f  (18255) 6%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x4000]
@@ -250,95 +251,88 @@ External Symbols in Program Memory (by address):
                   0x000e64                  ___vfprintf
                   0x000e80                  ___extendsfdf2
                   0x000ebe                  __funpack
+                  0x000ee8                  ___mulsi3
                   0x000ee8                  ___mulp32eds3
                   0x000ee8                  ___mulp32peds3
-                  0x000ee8                  ___mulsi3
                   0x000f40                  ___udivmoddi3
                   0x001026                  ___udivdi3
                   0x001034                  ___umoddi3
                   0x00103c                  ___divdi3
                   0x00109c                  ___moddi3
-                  0x0012a8                  _FONT
-                  0x001380                  _main
-                  0x0017b8                  _ShowMenu
-                  0x001904                  _ChangePassword
-                  0x001b0a                  _HandleLockout
-                  0x001b64                  _EnterSleepMode
-                  0x001bb6                  _ManageUsers
-                  0x001cda                  _UserAction_Add
-                  0x001ec0                  _UserAction_EditDelete
-                  0x001fd2                  _Delay10us
-                  0x00201a                  _DelayMs
-                  0x002058                  _DeviceWrite
-                  0x00206e                  _DeviceRead
-                  0x00208c                  _SingleDeviceRead
-                  0x0020a2                  _DeviceReadWord
-                  0x0020d2                  _DriverInterfaceInit
-                  0x0021a2                  _ResetDevice
-                  0x002476                  _PutPixel
-                  0x002600                  _GetPixel
-                  0x002718                  _ClearDevice
-                  0x002800                  _code_storage
-                  0x002c00                  _user_storage
-                  0x003000                  _delay_ms
-                  0x00304a                  _InitDummyDatabase
-                  0x0030e2                  _SaveCodeToFlash
-                  0x003172                  _LoadCodeFromFlash
-                  0x003280                  _SaveUsersToFlash
-                  0x0032ce                  _LoadUsersFromFlash
-                  0x003330                  _ReadPotentiometer
-                  0x003356                  _CTMUInit
-                  0x0033c4                  _ReadCTMU
-                  0x0035f6                  _GetPressedButton
-                  0x00361a                  _DrawChar
-                  0x0036dc                  _DrawString
-                  0x003710                  _DisplayPasswordProgress
-                  0x003770                  _DisplayTimer
-                  0x0037fe                  _ShowCalibrationScreen
-                  0x003814                  _SetRGBs
-                  0x003866                  _RGBMapColorPins
-                  0x0038d6                  _RGBTurnOffLED
-                  0x0038f4                  _RGBTurnOnLED
+                  0x00128e                  _FONT
+                  0x001366                  _main
+                  0x00179e                  _ShowMenu
+                  0x0018ea                  _HandleLockout
+                  0x001944                  _EnterSleepMode
+                  0x001996                  _ManageUsers
+                  0x001aba                  _UserAction_Add
+                  0x001cae                  _UserAction_EditDelete
+                  0x001dc0                  _Delay10us
+                  0x001e08                  _DelayMs
+                  0x001e46                  _DeviceWrite
+                  0x001e5c                  _DeviceRead
+                  0x001e7a                  _SingleDeviceRead
+                  0x001e90                  _DeviceReadWord
+                  0x001ec0                  _DriverInterfaceInit
+                  0x001f90                  _ResetDevice
+                  0x002264                  _PutPixel
+                  0x0023ee                  _GetPixel
+                  0x002506                  _ClearDevice
+                  0x002588                  _DrawChar
+                  0x00264a                  _DrawString
+                  0x00267e                  _DisplayPasswordProgress
+                  0x0026de                  _DisplayTimer
+                  0x00276c                  _ShowCalibrationScreen
+                  0x002800                  _user_storage
+                  0x002c00                  _ReadPotentiometer
+                  0x002c26                  _CTMUInit
+                  0x002c94                  _ReadCTMU
+                  0x002ec6                  _GetPressedButton
+                  0x002eea                  _delay_ms
+                  0x002f34                  _InitDummyDatabase
+                  0x002fcc                  _SaveUsersToFlash
+                  0x00301a                  _LoadUsersFromFlash
+                  0x00307c                  _SetRGBs
+                  0x0030ce                  _RGBMapColorPins
+                  0x00313e                  _RGBTurnOffLED
+                  0x00315c                  _RGBTurnOnLED
 
 External Symbols in Program Memory (by name):
 
-                  0x003356                  _CTMUInit
-                  0x001904                  _ChangePassword
-                  0x002718                  _ClearDevice
-                  0x001fd2                  _Delay10us
-                  0x00201a                  _DelayMs
-                  0x00206e                  _DeviceRead
-                  0x0020a2                  _DeviceReadWord
-                  0x002058                  _DeviceWrite
-                  0x003710                  _DisplayPasswordProgress
-                  0x003770                  _DisplayTimer
-                  0x00361a                  _DrawChar
-                  0x0036dc                  _DrawString
-                  0x0020d2                  _DriverInterfaceInit
-                  0x001b64                  _EnterSleepMode
-                  0x0012a8                  _FONT
-                  0x002600                  _GetPixel
-                  0x0035f6                  _GetPressedButton
-                  0x001b0a                  _HandleLockout
-                  0x00304a                  _InitDummyDatabase
-                  0x003172                  _LoadCodeFromFlash
-                  0x0032ce                  _LoadUsersFromFlash
-                  0x001bb6                  _ManageUsers
-                  0x002476                  _PutPixel
-                  0x003866                  _RGBMapColorPins
-                  0x0038d6                  _RGBTurnOffLED
-                  0x0038f4                  _RGBTurnOnLED
-                  0x0033c4                  _ReadCTMU
-                  0x003330                  _ReadPotentiometer
-                  0x0021a2                  _ResetDevice
-                  0x0030e2                  _SaveCodeToFlash
-                  0x003280                  _SaveUsersToFlash
-                  0x003814                  _SetRGBs
-                  0x0037fe                  _ShowCalibrationScreen
-                  0x0017b8                  _ShowMenu
-                  0x00208c                  _SingleDeviceRead
-                  0x001cda                  _UserAction_Add
-                  0x001ec0                  _UserAction_EditDelete
+                  0x002c26                  _CTMUInit
+                  0x002506                  _ClearDevice
+                  0x001dc0                  _Delay10us
+                  0x001e08                  _DelayMs
+                  0x001e5c                  _DeviceRead
+                  0x001e90                  _DeviceReadWord
+                  0x001e46                  _DeviceWrite
+                  0x00267e                  _DisplayPasswordProgress
+                  0x0026de                  _DisplayTimer
+                  0x002588                  _DrawChar
+                  0x00264a                  _DrawString
+                  0x001ec0                  _DriverInterfaceInit
+                  0x001944                  _EnterSleepMode
+                  0x00128e                  _FONT
+                  0x0023ee                  _GetPixel
+                  0x002ec6                  _GetPressedButton
+                  0x0018ea                  _HandleLockout
+                  0x002f34                  _InitDummyDatabase
+                  0x00301a                  _LoadUsersFromFlash
+                  0x001996                  _ManageUsers
+                  0x002264                  _PutPixel
+                  0x0030ce                  _RGBMapColorPins
+                  0x00313e                  _RGBTurnOffLED
+                  0x00315c                  _RGBTurnOnLED
+                  0x002c94                  _ReadCTMU
+                  0x002c00                  _ReadPotentiometer
+                  0x001f90                  _ResetDevice
+                  0x002fcc                  _SaveUsersToFlash
+                  0x00307c                  _SetRGBs
+                  0x00276c                  _ShowCalibrationScreen
+                  0x00179e                  _ShowMenu
+                  0x001e7a                  _SingleDeviceRead
+                  0x001aba                  _UserAction_Add
+                  0x001cae                  _UserAction_EditDelete
                   0x0002d4                  __DefaultInterrupt
                   0x0002cc                  __T1Interrupt
                   0x0005dc                  ___cvt_u
@@ -382,15 +376,14 @@ External Symbols in Program Memory (by name):
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
                   0x000d36                  _atoi
-                  0x002800                  _code_storage
-                  0x003000                  _delay_ms
-                  0x001380                  _main
+                  0x002eea                  _delay_ms
+                  0x001366                  _main
                   0x000d82                  _memcpy
                   0x0003a4                  _memset
                   0x000d90                  _strlen
                   0x000dc0                  _tolower
                   0x000dce                  _toupper
-                  0x002c00                  _user_storage
+                  0x002800                  _user_storage
 
 Memory Configuration
 
@@ -604,62 +597,62 @@ __CONFIG1
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x4b0e
+.debug_info       0x000000       0x487a
  *(.debug_info)
  .debug_info      0x000000       0x1451 build/default/production/SH1101A.o
- .debug_info      0x001451        0xe6a build/default/production/main.o
- .debug_info      0x0022bb        0xc78 build/default/production/TouchSense.o
- .debug_info      0x002f33        0xdc6 build/default/production/RGBLeds.o
- .debug_info      0x003cf9        0x3e5 build/default/production/DisplayUtils.o
- .debug_info      0x0040de        0x7fa build/default/production/SystemUtils.o
- .debug_info      0x0048d8         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
- .debug_info      0x004965         0x90 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
- .debug_info      0x0049f5         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
- .debug_info      0x004a82         0x8c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
+ .debug_info      0x001451        0xd60 build/default/production/main.o
+ .debug_info      0x0021b1        0xc78 build/default/production/TouchSense.o
+ .debug_info      0x002e29        0xdc6 build/default/production/RGBLeds.o
+ .debug_info      0x003bef        0x3e5 build/default/production/DisplayUtils.o
+ .debug_info      0x003fd4        0x670 build/default/production/SystemUtils.o
+ .debug_info      0x004644         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_info      0x0046d1         0x90 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
+ .debug_info      0x004761         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
+ .debug_info      0x0047ee         0x8c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x8f8
+.debug_abbrev     0x000000        0x8fe
  *(.debug_abbrev)
  .debug_abbrev    0x000000        0x1b9 build/default/production/SH1101A.o
- .debug_abbrev    0x0001b9        0x1f1 build/default/production/main.o
- .debug_abbrev    0x0003aa        0x1b4 build/default/production/TouchSense.o
- .debug_abbrev    0x00055e         0xe9 build/default/production/RGBLeds.o
- .debug_abbrev    0x000647         0xce build/default/production/DisplayUtils.o
- .debug_abbrev    0x000715        0x193 build/default/production/SystemUtils.o
- .debug_abbrev    0x0008a8         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
- .debug_abbrev    0x0008bc         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
- .debug_abbrev    0x0008d0         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
- .debug_abbrev    0x0008e4         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
+ .debug_abbrev    0x0001b9        0x202 build/default/production/main.o
+ .debug_abbrev    0x0003bb        0x1b4 build/default/production/TouchSense.o
+ .debug_abbrev    0x00056f         0xe9 build/default/production/RGBLeds.o
+ .debug_abbrev    0x000658         0xce build/default/production/DisplayUtils.o
+ .debug_abbrev    0x000726        0x188 build/default/production/SystemUtils.o
+ .debug_abbrev    0x0008ae         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_abbrev    0x0008c2         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
+ .debug_abbrev    0x0008d6         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
+ .debug_abbrev    0x0008ea         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
 
-.debug_line       0x000000        0xb78
+.debug_line       0x000000        0xaf4
  *(.debug_line)
  .debug_line      0x000000        0x241 build/default/production/SH1101A.o
- .debug_line      0x000241        0x304 build/default/production/main.o
- .debug_line      0x000545        0x174 build/default/production/TouchSense.o
- .debug_line      0x0006b9        0x10e build/default/production/RGBLeds.o
- .debug_line      0x0007c7         0xce build/default/production/DisplayUtils.o
- .debug_line      0x000895        0x1c1 build/default/production/SystemUtils.o
- .debug_line      0x000a56         0x45 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
- .debug_line      0x000a9b         0x59 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
- .debug_line      0x000af4         0x4a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
- .debug_line      0x000b3e         0x3a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
+ .debug_line      0x000241        0x2b5 build/default/production/main.o
+ .debug_line      0x0004f6        0x174 build/default/production/TouchSense.o
+ .debug_line      0x00066a        0x10e build/default/production/RGBLeds.o
+ .debug_line      0x000778         0xce build/default/production/DisplayUtils.o
+ .debug_line      0x000846        0x18c build/default/production/SystemUtils.o
+ .debug_line      0x0009d2         0x45 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_line      0x000a17         0x59 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
+ .debug_line      0x000a70         0x4a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
+ .debug_line      0x000aba         0x3a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
 
-.debug_frame      0x000000        0x4ae
+.debug_frame      0x000000        0x460
  *(.debug_frame)
  .debug_frame     0x000000        0x132 build/default/production/SH1101A.o
- .debug_frame     0x000132        0x13e build/default/production/main.o
- .debug_frame     0x000270         0x7c build/default/production/TouchSense.o
- .debug_frame     0x0002ec         0x7c build/default/production/RGBLeds.o
- .debug_frame     0x000368         0x96 build/default/production/DisplayUtils.o
- .debug_frame     0x0003fe         0xb0 build/default/production/SystemUtils.o
+ .debug_frame     0x000132        0x124 build/default/production/main.o
+ .debug_frame     0x000256         0x7c build/default/production/TouchSense.o
+ .debug_frame     0x0002d2         0x7c build/default/production/RGBLeds.o
+ .debug_frame     0x00034e         0x96 build/default/production/DisplayUtils.o
+ .debug_frame     0x0003e4         0x7c build/default/production/SystemUtils.o
 
-.debug_str        0x000000        0x1c6
+.debug_str        0x000000        0x1ae
  *(.debug_str)
  .debug_str       0x000000         0x3b build/default/production/SH1101A.o
- .debug_str       0x00003b         0xa4 build/default/production/main.o
- .debug_str       0x0000df         0x5c build/default/production/TouchSense.o
- .debug_str       0x00013b         0x48 build/default/production/RGBLeds.o
- .debug_str       0x000183         0x43 build/default/production/SystemUtils.o
+ .debug_str       0x00003b         0x99 build/default/production/main.o
+ .debug_str       0x0000d4         0x5c build/default/production/TouchSense.o
+ .debug_str       0x000130         0x48 build/default/production/RGBLeds.o
+ .debug_str       0x000178         0x36 build/default/production/SystemUtils.o
 
 .debug_loc
  *(.debug_loc)
@@ -668,20 +661,20 @@ __CONFIG1
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000        0x456
+                  0x000000        0x408
  *(.debug_pubnames)
  .debug_pubnames
                   0x000000         0xd0 build/default/production/SH1101A.o
  .debug_pubnames
-                  0x0000d0        0x10b build/default/production/main.o
+                  0x0000d0         0xf8 build/default/production/main.o
  .debug_pubnames
-                  0x0001db         0xe0 build/default/production/TouchSense.o
+                  0x0001c8         0xe0 build/default/production/TouchSense.o
  .debug_pubnames
-                  0x0002bb         0x55 build/default/production/RGBLeds.o
+                  0x0002a8         0x55 build/default/production/RGBLeds.o
  .debug_pubnames
-                  0x000310         0x7e build/default/production/DisplayUtils.o
+                  0x0002fd         0x7e build/default/production/DisplayUtils.o
  .debug_pubnames
-                  0x00038e         0xc8 build/default/production/SystemUtils.o
+                  0x00037b         0x8d build/default/production/SystemUtils.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1954,70 +1947,65 @@ __c30_signature
  .ivt._T1Interrupt
                   0x00001a          0x2 build/default/production/main.o
 
-.const              0x90f8        0x288 load address 0x0010f8  
- .const             0x90f8        0x1b0 build/default/production/main.o
- .const             0x92a8         0xd8 build/default/production/DisplayUtils.o
-                    0x92a8                  _FONT
+.const              0x90f8        0x26e load address 0x0010f8  
+ .const             0x90f8        0x196 build/default/production/main.o
+ .const             0x928e         0xd8 build/default/production/DisplayUtils.o
+                    0x928e                  _FONT
 
-.text             0x001380       0x141a
- .text            0x001380        0xc52 build/default/production/main.o
-                  0x001380                  _main
-                  0x0017b8                  _ShowMenu
-                  0x001904                  _ChangePassword
-                  0x001b0a                  _HandleLockout
-                  0x001b64                  _EnterSleepMode
-                  0x001bb6                  _ManageUsers
-                  0x001cda                  _UserAction_Add
-                  0x001ec0                  _UserAction_EditDelete
- .text            0x001fd2        0x7c8 build/default/production/SH1101A.o
-                  0x001fd2                  _Delay10us
-                  0x00201a                  _DelayMs
-                  0x002058                  _DeviceWrite
-                  0x00206e                  _DeviceRead
-                  0x00208c                  _SingleDeviceRead
-                  0x0020a2                  _DeviceReadWord
-                  0x0020d2                  _DriverInterfaceInit
-                  0x0021a2                  _ResetDevice
-                  0x002476                  _PutPixel
-                  0x002600                  _GetPixel
-                  0x002718                  _ClearDevice
+.text             0x001366       0x1222
+ .text            0x001366        0xa5a build/default/production/main.o
+                  0x001366                  _main
+                  0x00179e                  _ShowMenu
+                  0x0018ea                  _HandleLockout
+                  0x001944                  _EnterSleepMode
+                  0x001996                  _ManageUsers
+                  0x001aba                  _UserAction_Add
+                  0x001cae                  _UserAction_EditDelete
+ .text            0x001dc0        0x7c8 build/default/production/SH1101A.o
+                  0x001dc0                  _Delay10us
+                  0x001e08                  _DelayMs
+                  0x001e46                  _DeviceWrite
+                  0x001e5c                  _DeviceRead
+                  0x001e7a                  _SingleDeviceRead
+                  0x001e90                  _DeviceReadWord
+                  0x001ec0                  _DriverInterfaceInit
+                  0x001f90                  _ResetDevice
+                  0x002264                  _PutPixel
+                  0x0023ee                  _GetPixel
+                  0x002506                  _ClearDevice
 
-_0610d5a069812c9c
+_05fce5a069827dfb
                   0x002800        0x400
- _0610d5a069812c9c
+ _05fce5a069827dfb
                   0x002800        0x400 build/default/production/SystemUtils.o
-                  0x002800                  _code_storage
+                  0x002800                  _user_storage
 
-_0610d64069812c9c
-                  0x002c00        0x400
- _0610d64069812c9c
-                  0x002c00        0x400 build/default/production/SystemUtils.o
-                  0x002c00                  _user_storage
+.text             0x002c00        0x2ea
+ .text            0x002c00        0x2ea build/default/production/TouchSense.o
+                  0x002c00                  _ReadPotentiometer
+                  0x002c26                  _CTMUInit
+                  0x002c94                  _ReadCTMU
+                  0x002ec6                  _GetPressedButton
 
-.text             0x003000        0x944
- .text            0x003000        0x330 build/default/production/SystemUtils.o
-                  0x003000                  _delay_ms
-                  0x00304a                  _InitDummyDatabase
-                  0x0030e2                  _SaveCodeToFlash
-                  0x003172                  _LoadCodeFromFlash
-                  0x003280                  _SaveUsersToFlash
-                  0x0032ce                  _LoadUsersFromFlash
- .text            0x003330        0x2ea build/default/production/TouchSense.o
-                  0x003330                  _ReadPotentiometer
-                  0x003356                  _CTMUInit
-                  0x0033c4                  _ReadCTMU
-                  0x0035f6                  _GetPressedButton
- .text            0x00361a        0x1fa build/default/production/DisplayUtils.o
-                  0x00361a                  _DrawChar
-                  0x0036dc                  _DrawString
-                  0x003710                  _DisplayPasswordProgress
-                  0x003770                  _DisplayTimer
-                  0x0037fe                  _ShowCalibrationScreen
- .text            0x003814        0x130 build/default/production/RGBLeds.o
-                  0x003814                  _SetRGBs
-                  0x003866                  _RGBMapColorPins
-                  0x0038d6                  _RGBTurnOffLED
-                  0x0038f4                  _RGBTurnOnLED
+.text             0x002588        0x1fa
+ .text            0x002588        0x1fa build/default/production/DisplayUtils.o
+                  0x002588                  _DrawChar
+                  0x00264a                  _DrawString
+                  0x00267e                  _DisplayPasswordProgress
+                  0x0026de                  _DisplayTimer
+                  0x00276c                  _ShowCalibrationScreen
 
-.dinit            0x00279a         0x5c
- .dinit           0x00279a         0x5c data_init
+.text             0x002eea        0x2c2
+ .text            0x002eea        0x192 build/default/production/SystemUtils.o
+                  0x002eea                  _delay_ms
+                  0x002f34                  _InitDummyDatabase
+                  0x002fcc                  _SaveUsersToFlash
+                  0x00301a                  _LoadUsersFromFlash
+ .text            0x00307c        0x130 build/default/production/RGBLeds.o
+                  0x00307c                  _SetRGBs
+                  0x0030ce                  _RGBMapColorPins
+                  0x00313e                  _RGBTurnOffLED
+                  0x00315c                  _RGBTurnOnLED
+
+.dinit            0x002782         0x5c
+ .dinit           0x002782         0x5c data_init
