@@ -597,18 +597,18 @@ __CONFIG1
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x487a
+.debug_info       0x000000       0x486d
  *(.debug_info)
  .debug_info      0x000000       0x1451 build/default/production/SH1101A.o
- .debug_info      0x001451        0xd60 build/default/production/main.o
- .debug_info      0x0021b1        0xc78 build/default/production/TouchSense.o
- .debug_info      0x002e29        0xdc6 build/default/production/RGBLeds.o
- .debug_info      0x003bef        0x3e5 build/default/production/DisplayUtils.o
- .debug_info      0x003fd4        0x670 build/default/production/SystemUtils.o
- .debug_info      0x004644         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
- .debug_info      0x0046d1         0x90 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
- .debug_info      0x004761         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
- .debug_info      0x0047ee         0x8c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
+ .debug_info      0x001451        0xd53 build/default/production/main.o
+ .debug_info      0x0021a4        0xc78 build/default/production/TouchSense.o
+ .debug_info      0x002e1c        0xdc6 build/default/production/RGBLeds.o
+ .debug_info      0x003be2        0x3e5 build/default/production/DisplayUtils.o
+ .debug_info      0x003fc7        0x670 build/default/production/SystemUtils.o
+ .debug_info      0x004637         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_info      0x0046c4         0x90 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
+ .debug_info      0x004754         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
+ .debug_info      0x0047e1         0x8c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000        0x8fe
@@ -624,18 +624,18 @@ __CONFIG1
  .debug_abbrev    0x0008d6         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
  .debug_abbrev    0x0008ea         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
 
-.debug_line       0x000000        0xaf4
+.debug_line       0x000000        0xaed
  *(.debug_line)
  .debug_line      0x000000        0x241 build/default/production/SH1101A.o
- .debug_line      0x000241        0x2b5 build/default/production/main.o
- .debug_line      0x0004f6        0x174 build/default/production/TouchSense.o
- .debug_line      0x00066a        0x10e build/default/production/RGBLeds.o
- .debug_line      0x000778         0xce build/default/production/DisplayUtils.o
- .debug_line      0x000846        0x18c build/default/production/SystemUtils.o
- .debug_line      0x0009d2         0x45 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
- .debug_line      0x000a17         0x59 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
- .debug_line      0x000a70         0x4a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
- .debug_line      0x000aba         0x3a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
+ .debug_line      0x000241        0x2ae build/default/production/main.o
+ .debug_line      0x0004ef        0x174 build/default/production/TouchSense.o
+ .debug_line      0x000663        0x10e build/default/production/RGBLeds.o
+ .debug_line      0x000771         0xce build/default/production/DisplayUtils.o
+ .debug_line      0x00083f        0x18c build/default/production/SystemUtils.o
+ .debug_line      0x0009cb         0x45 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.XX_o)
+ .debug_line      0x000a10         0x59 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.XX_o)
+ .debug_line      0x000a69         0x4a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.XX_o)
+ .debug_line      0x000ab3         0x3a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.XX_o)
 
 .debug_frame      0x000000        0x460
  *(.debug_frame)

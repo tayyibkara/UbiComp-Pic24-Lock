@@ -178,38 +178,30 @@ int main(void) {
         // ============================================
         if (currentButton != -1 && lastButtonState == -1) {
             
-            // Any button press resets the inactivity timer
+            // Any button wake-up / activity reset
             lastActivityTime = globalTimer; 
             
             if (currentStep == 0 && !timerActive) {
                 timerActive = 1;
                 timerStart = globalTimer;
             }
-            
-            SetRGBs(0, 0, 255); // Blue flash
-            
-            if (currentStep < codeLength) {
-                enteredCode[currentStep] = currentButton;
-                currentStep++; 
-                DisplayPasswordProgress(currentStep);
-                blinkingSteps = currentStep;
-                isBlinking = 1;
-                blinkStart = globalTimer;
-            }
-            
-            // Check Code
-            if (currentStep >= 4) { // Only check if at least 4 digits entered
+
+            // --- CASE A: CENTER BUTTON (SUBMIT/VERIFY) ---
+            if (currentButton == 4) {
+                // User pressed Center ("5") -> This acts as "ENTER"
                 
-                timerActive = 0; // Stop timer while checking
+                timerActive = 0; 
                 int foundUserIndex = -1;
 
-                // --- SCAN DATABASE ---
+                // Scan Database
                 for(int i = 0; i < MAX_USERS; i++) {
                     if(userDB[i].isActive) {
-                        // 1. Check Length
+                        // 1. Check Exact Length Match (Fixes 4 vs 8 conflict)
+                        // If you typed 4 digits, it only checks 4-digit users.
+                        // If you typed 8 digits, it only checks 8-digit users.
                         if(currentStep != userDB[i].codeLength) continue;
 
-                        // 2. Check Code
+                        // 2. Check Code Digits
                         int match = 1;
                         for(int j = 0; j < currentStep; j++) {
                             if(enteredCode[j] != userDB[i].code[j]) { 
@@ -217,10 +209,9 @@ int main(void) {
                                 break; 
                             }
                         }
-
                         if(match) {
                             foundUserIndex = i;
-                            break; // Found a valid user! Stop scanning.
+                            break; 
                         }
                     }
                 }
@@ -229,22 +220,19 @@ int main(void) {
                 
                 if (foundUserIndex != -1) {
                     // --- SUCCESS ---
-                    loggedInUserIndex = foundUserIndex; // <--- SAVE THE USER ID HERE
-                    
+                    loggedInUserIndex = foundUserIndex; 
                     failedAttempts = 0;
                     
-                    // Show specific user ID
                     char msg[16];
                     sprintf(msg, "USER %d", userDB[foundUserIndex].id);
                     DrawString(10, 10, "WELCOME:");
                     DrawString(10, 25, msg);
-                    
                     SetRGBs(0, 255, 0); 
                     delay_ms(2000);
                     
-                    // (Menu Logic would go here later)
-                    // For now, just reset
-                    ShowMenu();
+                    ShowMenu(); // Enter Menu
+                    
+                    // Reset to Standby
                     isStandby = 1; 
                     lastActivityTime = globalTimer; 
                     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
@@ -254,8 +242,6 @@ int main(void) {
                     
                 } else {
                     // --- FAILURE ---
-                    // Only fail if we reached 8 digits OR user stopped typing (timeout)
-                    // But for this simple test, if it didn't match any user, it fails.
                     DrawString(10, 15, "KEY WRONG");
                     SetRGBs(255, 0, 0); 
                     
@@ -273,54 +259,24 @@ int main(void) {
                 currentStep = 0;
                 isBlinking = 0;
             }
-//            if (currentStep == codeLength) {
-//                timerActive = 0;
-//                
-//                int isCorrect = 1;
-//                for (int i = 0; i < codeLength; i++) {
-//                    if (enteredCode[i] != secretCode[i]) {
-//                        isCorrect = 0;
-//                        break;
-//                    }
-//                }
-//                
-//                SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-//                
-//                if (isCorrect) {
-//                    failedAttempts = 0;
-//                    DrawString(10, 20, "UNLOCKED");
-//                    SetRGBs(0, 255, 0); 
-//                    delay_ms(1000);
-//                    
-//                    ShowMenu(); // Enter Menu
-//                    
-//                    // Reset after Menu exit
-//                    isStandby = 1; 
-//                    lastActivityTime = globalTimer; // Reset timer for standby
-//                    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-//                    DrawString(10, 20, "STANDBY");
-//                    DrawString(10, 35, "PRESS CENTER");
-//                    SetRGBs(255, 0, 0); 
-//                    
-//                } else {
-//                    DrawString(10, 15, "KEY WRONG");
-//                    SetRGBs(255, 0, 0); 
-//                    
-//                    failedAttempts++;
-//                    if (failedAttempts >= 3) {
-//                        HandleLockout(); 
-//                    } else {
-//                        delay_ms(2000); 
-//                    }
-//                    
-//                    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-//                    DrawString(10, 10, "ENTER KEY");
-//                    lastActivityTime = globalTimer;
-//                }
-//                currentStep = 0;
-//                isBlinking = 0;
-//            }
-            delay_ms(250);
+            // --- CASE B: DIRECTION BUTTONS (ADD DIGIT) ---
+            else {
+                SetRGBs(0, 0, 255); // Blue flash on keypress
+                
+                // FIX: Allow typing up to 8 digits (or more if you change MAX_CODE_LEN)
+                // We no longer rely on 'codeLength' variable here.
+                if (currentStep < 8) { 
+                    enteredCode[currentStep] = currentButton;
+                    currentStep++; 
+                    DisplayPasswordProgress(currentStep);
+                    blinkingSteps = currentStep;
+                    isBlinking = 1;
+                    blinkStart = globalTimer;
+                }
+            }
+            
+            // Keep your existing debounce
+            delay_ms(250); 
         }
 
         if (currentButton == -1 && lastButtonState != -1) {
@@ -332,63 +288,6 @@ int main(void) {
     }
     return 0;
 }
-// ============================================
-// MENU LOGIC
-// ============================================
-
-
-//void ShowMenu(void) {
-//    int selection = 0; 
-//    int inMenu = 1;
-//    int lastBtn = -1;
-//    int needsRedraw = 1; 
-//    
-//    // Local Timer for Menu Timeout
-//    unsigned long menuTimer = globalTimer;
-//
-//    while(GetPressedButton() != -1) ReadCTMU();
-//
-//    while(inMenu) {
-//        ReadCTMU();
-//        int btn = GetPressedButton();
-//        
-//        // --- TIMEOUT CHECK ---
-//        if (globalTimer - menuTimer > 30000) {
-//            return; // Exit to Main -> Main puts us in Standby
-//        }
-//        
-//        if (needsRedraw) {
-//            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-//            DrawString(10, 5, "MAIN MENU");
-//            if (selection == 0) DrawString(10, 25, "> LOCK SYSTEM");
-//            else DrawString(10, 25, "  LOCK SYSTEM");
-//            if (selection == 1) DrawString(10, 40, "> CHANGE KEY");
-//            else DrawString(10, 40, "  CHANGE KEY");
-//            needsRedraw = 0; 
-//        }
-//        
-//        if (btn != -1 && btn != lastBtn) {
-//            menuTimer = globalTimer; // Reset Timer on Input
-//            
-//            if (btn == 0 || btn == 2) { 
-//                selection = !selection; 
-//                needsRedraw = 1; 
-//            } 
-//            else if (btn == 4 || btn == 1) { 
-//                if (selection == 0) inMenu = 0; 
-//                else {
-//                    ChangePassword(); 
-//                    needsRedraw = 1; 
-//                    menuTimer = globalTimer; // Reset when returning
-//                }
-//            }
-//            delay_ms(150);
-//        }
-//        lastBtn = btn;
-//        delay_ms(50);
-//    }
-//}
-//
 
 void ShowMenu(void) {
     int selection = 0; 
@@ -457,93 +356,6 @@ void ShowMenu(void) {
         delay_ms(50);
     }
 }
-
-//void ChangePassword(void) {
-//    int newLen = 4;
-//    int choosing = 1;
-//    int lastBtn = -1;
-//    int needsRedraw = 1; 
-//    
-//    unsigned long subMenuTimer = globalTimer; // Local Timer
-//    
-//    while(GetPressedButton() != -1) ReadCTMU();
-//    
-//    // --- STEP 1: CHOOSE LENGTH ---
-//    while(choosing) {
-//        ReadCTMU();
-//        int btn = GetPressedButton();
-//        
-//        // Timeout Check
-//        if (globalTimer - subMenuTimer > 30000) return;
-//        
-//        if (needsRedraw) {
-//            SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-//            DrawString(10, 5, "LENGTH?");
-//            if (newLen == 4) DrawString(10, 25, "> 4 DIGITS");
-//            else DrawString(10, 25, "  4 DIGITS");
-//            if (newLen == 8) DrawString(10, 40, "> 8 DIGITS");
-//            else DrawString(10, 40, "  8 DIGITS");
-//            needsRedraw = 0;
-//        }
-//        
-//        if (btn != -1 && btn != lastBtn) {
-//            subMenuTimer = globalTimer; // Reset Timer
-//            if (btn == 0 || btn == 2) { 
-//                newLen = (newLen == 4) ? 8 : 4;
-//                needsRedraw = 1; 
-//            }
-//            else if (btn == 4 || btn == 1) choosing = 0;
-//            delay_ms(150);
-//        }
-//        lastBtn = btn;
-//        delay_ms(50);
-//    }
-//    
-//    // --- STEP 2: ENTER NEW CODE ---
-//    int count = 0;
-//    uint8_t temp[8];
-//    subMenuTimer = globalTimer; // Reset Timer for Step 2
-//    
-//    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-//    DrawString(10, 10, "ENTER NEW:");
-//    
-//    while(GetPressedButton() != -1) ReadCTMU();
-//    lastBtn = -1;
-//    
-//    while(count < newLen) {
-//        ReadCTMU();
-//        int btn = GetPressedButton();
-//        
-//        // Timeout Check
-//        if (globalTimer - subMenuTimer > 30000) return;
-//        
-//        if (btn != -1 && btn != lastBtn) {
-//            subMenuTimer = globalTimer; // Reset Timer
-//            if (btn == 4) continue; 
-//            
-//            temp[count] = btn;
-//            count++;
-//            
-//            SetColor(WHITE);
-//            for(int i=0; i<count; i++) DrawChar(10 + (i*6), 30, '*');
-//            SetRGBs(0, 0, 255); delay_ms(100); SetRGBs(0, 255, 0);
-//        }
-//        lastBtn = btn;
-//    }
-//    
-//    // Save Logic (No changes here)
-//    codeLength = newLen;
-//    for(int i=0; i<8; i++) {
-//        if(i < newLen) secretCode[i] = temp[i];
-//        else secretCode[i] = 0;
-//    }
-//    SaveCodeToFlash(secretCode, codeLength);
-//    SetColor(BLACK); ClearDevice(); SetColor(WHITE);
-//    DrawString(10, 25, "SAVED!");
-//    delay_ms(1500);
-//}
-//
-//
 
 void HandleLockout(void) {
     SetColor(BLACK); ClearDevice(); SetColor(WHITE);
