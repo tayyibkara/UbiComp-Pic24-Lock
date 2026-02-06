@@ -155,73 +155,45 @@ pic24fStarter-main/
 
 ---
 
-## 📊 Grading Rubric Compliance
-
-| Criterion | Points | Status |
-|-----------|--------|--------|
-| **Functionality** | /5 | ✅ Fully working prototype |
-| **Technical Implementation** | /5 | ✅ Modular architecture, clean code |
-| **User Experience & Design** | /3 | ✅ Intuitive menu, visual feedback |
-| **Innovation & Problem Fit** | /3 | ✅ Multi-user + persistence + low power |
-| **Teamwork & Roles** | /2 | ✅ Balanced contributions |
-| **Presentation Quality** | /2 | ✅ Clear documentation |
-
----
-
 ## 🔄 State Machine
 
-```mermaid
-stateDiagram-v2
-    direction TB
-    
-    [*] --> STANDBY: Power On
-    
-    STANDBY --> KEY_ENTRY: CENTER Button
-    STANDBY --> SLEEP: 30s Inactivity
-    
-    KEY_ENTRY --> MAIN_MENU: ✅ Correct PIN
-    KEY_ENTRY --> KEY_ENTRY: ❌ Wrong PIN
-    KEY_ENTRY --> KEY_ENTRY: ⏱️ Timeout (15s)
-    KEY_ENTRY --> STANDBY: 30s Inactivity
-    KEY_ENTRY --> LOCKOUT: 3x Failed
-    
-    LOCKOUT --> KEY_ENTRY: 30s Wait
-    
-    MAIN_MENU --> STANDBY: Lock System
-    MAIN_MENU --> MANAGE_USERS: Admin Only
-    MAIN_MENU --> CHANGE_KEY: Standard User
-    
-    MANAGE_USERS --> MAIN_MENU: Back
-    CHANGE_KEY --> MAIN_MENU: Done
-    
-    SLEEP --> KEY_ENTRY: CENTER Button
-    
-    state STANDBY {
-        [*] --> Display_Standby
-        Display_Standby: "STANDBY"
-        Display_Standby: "PRESS CENTER"
-        Display_Standby: 🔴 Red LED
-    }
-    
-    state KEY_ENTRY {
-        [*] --> Entering
-        Entering: "ENTER KEY"
-        Entering: ⏱️ 15s Countdown
-        Entering: 🔵 Blue on keypress
-    }
-    
-    state MAIN_MENU {
-        [*] --> Menu_Options
-        Menu_Options: "> LOCK SYSTEM"
-        Menu_Options: "> MANAGE USERS / CHANGE KEY"
-    }
-    
-    state SLEEP {
-        [*] --> Low_Power
-        Low_Power: CPU Idle Mode
-        Low_Power: OLED + LEDs OFF
-        Low_Power: Wake every 250ms
-    }
+```
+                        ╔═══════════════════╗
+                        ║     STANDBY       ║
+                        ║  "PRESS CENTER"   ║◄──────────────────────╮
+                        ║     🔴 RED        ║                       │
+                        ╚════════╤══════════╝                       │
+                                 │                                  │
+                                 │ [CENTER]                         │
+                                 ▼                                  │
+                        ╔═══════════════════╗                       │
+                        ║    KEY ENTRY      ║                       │
+                        ║   ⏱️ 15s Timer    ║──── Wrong PIN ───╮    │
+                        ║     🔵 BLUE       ║◄─────────────────╯    │
+                        ╚════════╤══════════╝                       │
+                                 │                                  │
+                                 │ [Correct PIN]                    │ [Lock]
+                                 ▼                                  │
+                        ╔═══════════════════╗                       │
+                        ║    MAIN MENU      ║───────────────────────╯
+                        ║   🟢 GREEN        ║
+                        ╚═══════════════════╝
+
+
+        ════════════════════════════════════════════════════════════
+
+                        30s Inactivity in Standby
+                                 │
+                                 ▼
+                        ╔═══════════════════╗
+                        ║    SLEEP MODE     ║
+                        ║   💤 CPU Idle     ║
+                        ║   LEDs + OLED OFF ║
+                        ╚═══════════════════╝
+                                 │
+                                 │ [CENTER to Wake]
+                                 ▼
+                            Back to KEY ENTRY
 ```
 
 ---
