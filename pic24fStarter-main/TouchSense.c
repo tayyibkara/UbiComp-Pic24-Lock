@@ -176,14 +176,37 @@ void ReadCTMU() {
     AD1CHS = tempADch;    
 }
 
+//// =========================================================
+//// REQUIRED HELPER FOR MAIN.C
+//// (This was missing from the professor's code but is REQUIRED for your menu)
+//// =========================================================
+//int GetPressedButton(void) {
+//    // 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
+//    for(int i = 0; i < NUM_TOUCHPADS; i++) {
+//        if(buttons[i] == 1) return i;
+//    }
+//    return -1;
+//}
 // =========================================================
-// REQUIRED HELPER FOR MAIN.C
-// (This was missing from the professor's code but is REQUIRED for your menu)
+// SMART "WINNER TAKES ALL" LOGIC
 // =========================================================
 int GetPressedButton(void) {
-    // 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT, 4=CENTER
+    int winner = -1;
+    int maxSignalStrength = 0;
+
+    // Check all pads to find the strongest touch
     for(int i = 0; i < NUM_TOUCHPADS; i++) {
-        if(buttons[i] == 1) return i;
+        if(buttons[i] == 1) {
+            // Calculate how "hard" the button is pressed
+            // Signal = Baseline (Average) - Current Reading (rawCTMU)
+            // The higher the difference, the more finger contact there is.
+            int signalStrength = (int)average[i] - (int)rawCTMU[i];
+
+            if (signalStrength > maxSignalStrength) {
+                maxSignalStrength = signalStrength;
+                winner = i;
+            }
+        }
     }
-    return -1;
+    return winner;
 }

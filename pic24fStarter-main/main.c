@@ -437,7 +437,7 @@ void ManageUsers(void) {
     int needsRedraw = 1;
     unsigned long subTimer = globalTimer;
     char buffer[20];
-
+    delay_ms(250);
     while(GetPressedButton() != -1) ReadCTMU();
 
     while(inSubMenu) {
@@ -510,7 +510,7 @@ void UserAction_Add(int userId) {
     int choosing = 1;
     int lastBtn = -1;
     int needsRedraw = 1; 
-    
+    delay_ms(250);
     // 1. Choose Length
     while(GetPressedButton() != -1) ReadCTMU();
     
@@ -596,7 +596,7 @@ void UserAction_EditDelete(int userIndex) {
     int choosing = 1;
     int lastBtn = -1;
     int needsRedraw = 1;
-    
+    delay_ms(250);
     while(GetPressedButton() != -1) ReadCTMU();
     
     while(choosing) {
